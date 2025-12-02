@@ -1,0 +1,362 @@
+{
+  "Version": 1,
+  "Hash": "0Db8jKDmI46ZhGmEV4TYIMEwfFy062hY8xdW98ivAOs=",
+  "Source": "MissionControl.Api",
+  "BasePath": "_content/MissionControl.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "MissionControl.Api\\wwwroot",
+      "Source": "MissionControl.Api",
+      "ContentRoot": "C:\\Users\\cbb4b\\OneDrive\\Desktop\\Project Tutweiler\\ProjectTutwiler\\MissionControl.Api\\wwwroot\\",
+      "BasePath": "_content/MissionControl.Api",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\cbb4b\\OneDrive\\Desktop\\Project Tutweiler\\ProjectTutwiler\\MissionControl.Api\\obj\\Debug\\net9.0\\compressed\\rmf8xliqqb-vflixhyjxj.gz",
+      "SourceId": "MissionControl.Api",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\cbb4b\\OneDrive\\Desktop\\Project Tutweiler\\ProjectTutwiler\\MissionControl.Api\\obj\\Debug\\net9.0\\compressed\\",
+      "BasePath": "_content/MissionControl.Api",
+      "RelativePath": "index#[.{fingerprint=vflixhyjxj}]?.html.gz",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "C:\\Users\\cbb4b\\OneDrive\\Desktop\\Project Tutweiler\\ProjectTutwiler\\MissionControl.Api\\wwwroot\\index.html",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "Fingerprint": "sr8pz0ri7k",
+      "Integrity": "WNTeB0savpj2pElsnmwvAavfdJ0NWkR4L2gJOQUQKCs=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\cbb4b\\OneDrive\\Desktop\\Project Tutweiler\\ProjectTutwiler\\MissionControl.Api\\wwwroot\\index.html"
+    },
+    {
+      "Identity": "C:\\Users\\cbb4b\\OneDrive\\Desktop\\Project Tutweiler\\ProjectTutwiler\\MissionControl.Api\\wwwroot\\index.html",
+      "SourceId": "MissionControl.Api",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\cbb4b\\OneDrive\\Desktop\\Project Tutweiler\\ProjectTutwiler\\MissionControl.Api\\wwwroot\\",
+      "BasePath": "_content/MissionControl.Api",
+      "RelativePath": "index#[.{fingerprint}]?.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "vflixhyjxj",
+      "Integrity": "C8JblyHeoeFHWIkVNjkLW69PL+9vpBMYPICnGslOWcs=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\index.html"
+    }
+  ],
+  "Endpoints": [
+    {
+      "Route": "index.html",
+      "AssetFile": "C:\\Users\\cbb4b\\OneDrive\\Desktop\\Project Tutweiler\\ProjectTutwiler\\MissionControl.Api\\obj\\Debug\\net9.0\\compressed\\rmf8xliqqb-vflixhyjxj.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000183654729"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5444"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"WNTeB0savpj2pElsnmwvAavfdJ0NWkR4L2gJOQUQKCs=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 02 Dec 2025 20:57:57 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"C8JblyHeoeFHWIkVNjkLW69PL+9vpBMYPICnGslOWcs=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-C8JblyHeoeFHWIkVNjkLW69PL+9vpBMYPICnGslOWcs="
+        }
+      ]
+    },
+    {
+      "Route": "index.html",
+      "AssetFile": "C:\\Users\\cbb4b\\OneDrive\\Desktop\\Project Tutweiler\\ProjectTutwiler\\MissionControl.Api\\wwwroot\\index.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "24535"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"C8JblyHeoeFHWIkVNjkLW69PL+9vpBMYPICnGslOWcs=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 02 Dec 2025 20:57:57 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-C8JblyHeoeFHWIkVNjkLW69PL+9vpBMYPICnGslOWcs="
+        }
+      ]
+    },
+    {
+      "Route": "index.html.gz",
+      "AssetFile": "C:\\Users\\cbb4b\\OneDrive\\Desktop\\Project Tutweiler\\ProjectTutwiler\\MissionControl.Api\\obj\\Debug\\net9.0\\compressed\\rmf8xliqqb-vflixhyjxj.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5444"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"WNTeB0savpj2pElsnmwvAavfdJ0NWkR4L2gJOQUQKCs=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 02 Dec 2025 20:57:57 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-WNTeB0savpj2pElsnmwvAavfdJ0NWkR4L2gJOQUQKCs="
+        }
+      ]
+    },
+    {
+      "Route": "index.vflixhyjxj.html",
+      "AssetFile": "C:\\Users\\cbb4b\\OneDrive\\Desktop\\Project Tutweiler\\ProjectTutwiler\\MissionControl.Api\\obj\\Debug\\net9.0\\compressed\\rmf8xliqqb-vflixhyjxj.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000183654729"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5444"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"WNTeB0savpj2pElsnmwvAavfdJ0NWkR4L2gJOQUQKCs=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 02 Dec 2025 20:57:57 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"C8JblyHeoeFHWIkVNjkLW69PL+9vpBMYPICnGslOWcs=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "vflixhyjxj"
+        },
+        {
+          "Name": "label",
+          "Value": "index.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-C8JblyHeoeFHWIkVNjkLW69PL+9vpBMYPICnGslOWcs="
+        }
+      ]
+    },
+    {
+      "Route": "index.vflixhyjxj.html",
+      "AssetFile": "C:\\Users\\cbb4b\\OneDrive\\Desktop\\Project Tutweiler\\ProjectTutwiler\\MissionControl.Api\\wwwroot\\index.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "24535"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"C8JblyHeoeFHWIkVNjkLW69PL+9vpBMYPICnGslOWcs=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 02 Dec 2025 20:57:57 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "vflixhyjxj"
+        },
+        {
+          "Name": "label",
+          "Value": "index.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-C8JblyHeoeFHWIkVNjkLW69PL+9vpBMYPICnGslOWcs="
+        }
+      ]
+    },
+    {
+      "Route": "index.vflixhyjxj.html.gz",
+      "AssetFile": "C:\\Users\\cbb4b\\OneDrive\\Desktop\\Project Tutweiler\\ProjectTutwiler\\MissionControl.Api\\obj\\Debug\\net9.0\\compressed\\rmf8xliqqb-vflixhyjxj.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5444"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"WNTeB0savpj2pElsnmwvAavfdJ0NWkR4L2gJOQUQKCs=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 02 Dec 2025 20:57:57 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "vflixhyjxj"
+        },
+        {
+          "Name": "label",
+          "Value": "index.html.gz"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-WNTeB0savpj2pElsnmwvAavfdJ0NWkR4L2gJOQUQKCs="
+        }
+      ]
+    }
+  ]
+}

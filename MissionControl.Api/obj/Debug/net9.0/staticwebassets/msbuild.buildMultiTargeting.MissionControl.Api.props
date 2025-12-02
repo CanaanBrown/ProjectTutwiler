@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\MissionControl.Api.props" />
+</Project>

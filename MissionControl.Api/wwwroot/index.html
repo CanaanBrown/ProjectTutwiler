@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mission Control – Prototype</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 1.5rem;
+      background: #0f172a;
+      color: #e5e7eb;
+    }
+    h1 {
+      margin-bottom: 0.15rem;
+    }
+    .subtitle {
+      color: #9ca3af;
+      margin-bottom: 0;
+    }
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 1.25rem;
+    }
+    .site-selector {
+      text-align: right;
+      font-size: 0.8rem;
+    }
+    .site-selector label {
+      display: block;
+      margin-bottom: 0.15rem;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .site-selector select {
+      background: #020617;
+      color: #e5e7eb;
+      border: 1px solid #1f2937;
+      border-radius: 999px;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.8rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+    .card {
+      background: #111827;
+      border-radius: 0.75rem;
+      padding: 1.25rem 1.5rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+      border: 1px solid #1f2937;
+    }
+    .card h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1.1rem;
+    }
+    .pill-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .pill-tlp {
+      background: #4b5563;
+      color: #e5e7eb;
+    }
+    .pill-red { background: #7f1d1d; color: #fecaca; }
+    .pill-yellow { background: #854d0e; color: #fef3c7; }
+    .pill-green { background: #065f46; color: #bbf7d0; }
+    .pill-status {
+      background: #1d4ed8;
+      color: #bfdbfe;
+    }
+    .pill-decision {
+      background: #047857;
+      color: #bbf7d0;
+    }
+    .label {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.25rem;
+    }
+    .value {
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+    }
+    .muted {
+      color: #6b7280;
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+    .metric {
+      padding: 0.6rem 0.75rem;
+      border-radius: 0.5rem;
+      background: #020617;
+      border: 1px solid #1f2937;
+    }
+    .metric-label {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      margin-bottom: 0.15rem;
+    }
+    .metric-value {
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .btn-go { background: #16a34a; color: white; }
+    .btn-hold { background: #eab308; color: #111827; }
+    .btn-escalate { background: #dc2626; color: white; }
+    .btn-go:disabled,
+    .btn-hold:disabled,
+    .btn-escalate:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+    .status-bar {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+    a {
+      color: #60a5fa;
+      text-decoration: none;
+      font-size: 0.8rem;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #1f2937;
+      margin: 1.25rem 0 0.75rem;
+    }
+
+    /* Recent alerts */
+    .recent-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.35rem;
+    }
+    .recent-header {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9ca3af;
+    }
+    .recent-filters {
+      display: flex;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+    }
+    .recent-filters select {
+      background: #020617;
+      color: #e5e7eb;
+      border: 1px solid #1f2937;
+      border-radius: 999px;
+      padding: 0.1rem 0.6rem;
+      font-size: 0.75rem;
+    }
+    .recent-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .recent-item {
+      padding: 0.45rem 0.55rem;
+      border-radius: 0.5rem;
+      background: #020617;
+      border: 1px solid #1f2937;
+    }
+    .recent-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.15rem;
+    }
+    .recent-title {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #e5e7eb;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .recent-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem 0.4rem;
+      align-items: center;
+      font-size: 0.7rem;
+      color: #9ca3af;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.1rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .badge-band-red { background: #7f1d1d; color: #fecaca; }
+    .badge-band-yellow { background: #854d0e; color: #fef3c7; }
+    .badge-band-green { background: #065f46; color: #bbf7d0; }
+    .badge-band-unknown { background: #4b5563; color: #e5e7eb; }
+    .badge-status { background: #1f2937; color: #bfdbfe; }
+    .badge-decision { background: #0f766e; color: #ccfbf1; }
+    .recent-time { color: #6b7280; }
+
+    /* History */
+    .history-header {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9ca3af;
+      margin-top: 1rem;
+      margin-bottom: 0.35rem;
+    }
+    .history-list {
+      font-size: 0.75rem;
+      max-height: 120px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    .history-main {
+      display: flex;
+      gap: 0.35rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .history-notes {
+      color: #9ca3af;
+    }
+    .history-time {
+      color: #6b7280;
+      white-space: nowrap;
+    }
+
+    /* Playbook */
+    .playbook {
+      margin-top: 1rem;
+    }
+    .playbook-list {
+      margin: 0.15rem 0 0;
+      padding-left: 1.1rem;
+      font-size: 0.85rem;
+      color: #d1d5db;
+    }
+  </style>
+</head>
+<body>
+  <div class="header-row">
+    <div>
+      <h1>Mission Control – Prototype</h1>
+      <div class="subtitle">Human-impact triage view powering this group project.</div>
+    </div>
+    <div class="site-selector">
+      <label for="siteSelector">Site</label>
+      <select id="siteSelector">
+        <option value="">All Sites</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- Left: Active Alert + History + Recent Alerts -->
+    <div class="card" id="activeAlertCard">
+      <h2>Current Active Alert</h2>
+      <div id="noAlert" class="muted">No ACTIVE alerts in queue.</div>
+
+      <div id="alertDetails" style="display:none;">
+        <div class="pill-row">
+          <span class="pill pill-tlp" id="tlpPill"></span>
+          <span class="pill" id="impactPill"></span>
+          <span class="pill pill-status" id="statusPill"></span>
+          <span class="pill pill-decision" id="decisionPill" style="display:none;"></span>
+        </div>
+
+        <div class="label">Title</div>
+        <div class="value" id="alertTitle"></div>
+
+        <div class="label">Description</div>
+        <div class="value" id="alertDescription"></div>
+
+        <div class="label">Affected Function</div>
+        <div class="value" id="alertFunction"></div>
+
+        <div class="label">Detected</div>
+        <div class="value" id="alertDetected"></div>
+
+        <div class="playbook">
+          <div class="label">Suggested Next Steps</div>
+          <ul id="playbookList" class="playbook-list"></ul>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-go" id="btnGo">GO</button>
+          <button class="btn-hold" id="btnHold">HOLD</button>
+          <button class="btn-escalate" id="btnEscalate">ESCALATE</button>
+        </div>
+
+        <div class="status-bar" id="actionStatus"></div>
+
+        <div class="history-header">Decision History</div>
+        <div id="historyList" class="history-list">
+          <div class="muted">No decisions yet.</div>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="recent-header-row">
+        <div class="recent-header">Recent Alerts</div>
+        <div class="recent-filters">
+          <select id="filterBand">
+            <option value="">Band: All</option>
+            <option value="RED">RED</option>
+            <option value="YELLOW">YELLOW</option>
+            <option value="GREEN">GREEN</option>
+          </select>
+          <select id="filterStatus">
+            <option value="">Status: All</option>
+            <option value="ACTIVE">ACTIVE</option>
+            <option value="RESOLVED">RESOLVED</option>
+            <option value="SUPPRESSED">SUPPRESSED</option>
+          </select>
+        </div>
+      </div>
+      <div id="recentAlertsList" class="recent-list">
+        <div class="muted">Loading…</div>
+      </div>
+    </div>
+
+    <!-- Right: Metrics -->
+    <div class="card">
+      <h2>Readiness & Coverage</h2>
+      <div class="metrics-grid" id="metricsGrid">
+        <div class="metric">
+          <div class="metric-label">Total Alerts</div>
+          <div class="metric-value" id="mTotalAlerts">0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Active Alerts</div>
+          <div class="metric-value" id="mActiveAlerts">0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">RED / YELLOW / GREEN</div>
+          <div class="metric-value" id="mBands">0 / 0 / 0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">GO / HOLD / ESCALATE</div>
+          <div class="metric-value" id="mDecisions">0 / 0 / 0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Assets with Ingest Feed</div>
+          <div class="metric-value" id="mAssets">0 / 0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Coverage</div>
+          <div class="metric-value" id="mCoverage">–</div>
+        </div>
+      </div>
+      <div class="status-bar" id="metricsUpdated"></div>
+      <div class="status-bar">
+        <a href="/swagger" target="_blank">Open Swagger UI</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const baseUrl = window.location.origin;
+    let currentSiteId = "";
+    let recentAlertsCache = [];
+
+    function buildSiteQuery() {
+      return currentSiteId ? `?siteId=${currentSiteId}` : "";
+    }
+
+    function impactClassFor(band) {
+      const upper = (band || "").toUpperCase();
+      if (upper === "RED") return "pill-red";
+      if (upper === "YELLOW") return "pill-yellow";
+      if (upper === "GREEN") return "pill-green";
+      return "pill-tlp";
+    }
+
+    function badgeBandClass(band) {
+      const upper = (band || "").toUpperCase();
+      if (upper === "RED") return "badge-band-red";
+      if (upper === "YELLOW") return "badge-band-yellow";
+      if (upper === "GREEN") return "badge-band-green";
+      return "badge-band-unknown";
+    }
+
+    function playbookForAlert(alert) {
+      const band = (alert.impactBand || "").toUpperCase();
+      const func = (alert.affectedFunction || "").toLowerCase();
+
+      // Very simple rules, just enough for demo
+      if (band === "RED" && func.includes("lab")) {
+        return [
+          "Notify lab supervisor and IT security within 30 minutes.",
+          "Apply interim controls (manual review or secondary checks).",
+          "Schedule a follow-up decision in 4 hours."
+        ];
+      }
+
+      if (band === "RED") {
+        return [
+          "Confirm scope and which systems are affected.",
+          "Put interim containment in place where possible.",
+          "Decide GO/HOLD/ESCALATE within the current shift."
+        ];
+      }
+
+      if (band === "YELLOW") {
+        return [
+          "Verify asset inventory and confirm this alert truly applies.",
+          "Document mitigation or compensating controls.",
+          "Re-evaluate within 24 hours if still on HOLD."
+        ];
+      }
+
+      if (band === "GREEN") {
+        return [
+          "Record the alert and any minor mitigations.",
+          "Fold into normal patch / maintenance workflow."
+        ];
+      }
+
+      return [
+        "Verify whether this alert actually applies to your environment.",
+        "Record a GO/HOLD/ESCALATE decision once understood."
+      ];
+    }
+
+    async function loadSites() {
+      const select = document.getElementById("siteSelector");
+      try {
+        const resp = await fetch(`${baseUrl}/api/Sites`);
+        if (!resp.ok) return;
+
+        const sites = await resp.json();
+        sites.forEach(s => {
+          const opt = document.createElement("option");
+          opt.value = s.siteId;
+          opt.textContent = s.name;
+          select.appendChild(opt);
+        });
+
+        select.onchange = () => {
+          currentSiteId = select.value;
+          refreshAll();
+        };
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function loadActiveAlert() {
+      const details = document.getElementById("alertDetails");
+      const noAlert = document.getElementById("noAlert");
+      const decisionPill = document.getElementById("decisionPill");
+      const statusText = document.getElementById("actionStatus");
+
+      statusText.textContent = "";
+
+      try {
+        const resp = await fetch(`${baseUrl}/api/Alerts/active${buildSiteQuery()}`);
+        if (resp.status === 404) {
+          details.style.display = "none";
+          noAlert.style.display = "block";
+          document.getElementById("historyList").innerHTML =
+            '<div class="muted">No decisions yet.</div>';
+          document.getElementById("playbookList").innerHTML = "";
+          return;
+        }
+        const alert = await resp.json();
+
+        noAlert.style.display = "none";
+        details.style.display = "block";
+
+        document.getElementById("tlpPill").textContent = alert.tlp || "TLP:UNKNOWN";
+
+        const impactPill = document.getElementById("impactPill");
+        impactPill.textContent = alert.impactBand || "IMPACT:UNKNOWN";
+        impactPill.className = `pill ${impactClassFor(alert.impactBand)}`;
+
+        document.getElementById("statusPill").textContent = alert.status || "STATUS:UNKNOWN";
+
+        if (alert.currentDecision) {
+          decisionPill.style.display = "inline-flex";
+          decisionPill.textContent = `Decision: ${alert.currentDecision}`;
+        } else {
+          decisionPill.style.display = "none";
+        }
+
+        document.getElementById("alertTitle").textContent = alert.title;
+        document.getElementById("alertDescription").textContent = alert.description || "(no description)";
+        document.getElementById("alertFunction").textContent = alert.affectedFunction || "(unspecified)";
+        document.getElementById("alertDetected").textContent =
+          alert.detectedAt ? new Date(alert.detectedAt).toLocaleString() : "(unknown)";
+
+        // Playbook
+        const playbook = playbookForAlert(alert);
+        const pbList = document.getElementById("playbookList");
+        pbList.innerHTML = "";
+        playbook.forEach(step => {
+          const li = document.createElement("li");
+          li.textContent = step;
+          pbList.appendChild(li);
+        });
+
+        const alertId = alert.alertId;
+
+        document.getElementById("btnGo").onclick = () => sendDecision(alertId, "GO");
+        document.getElementById("btnHold").onclick = () => sendDecision(alertId, "HOLD");
+        document.getElementById("btnEscalate").onclick = () => sendDecision(alertId, "ESCALATE");
+
+        await loadHistory(alertId);
+      } catch (err) {
+        noAlert.style.display = "block";
+        details.style.display = "none";
+        console.error(err);
+      }
+    }
+
+    async function loadHistory(alertId) {
+      const list = document.getElementById("historyList");
+      list.innerHTML = '<div class="muted">Loading…</div>';
+
+      try {
+        const resp = await fetch(`${baseUrl}/api/Alerts/${alertId}/decisions`);
+        if (!resp.ok) {
+          list.innerHTML = '<div class="muted">Unable to load history.</div>';
+          return;
+        }
+
+        const items = await resp.json();
+        if (!items || items.length === 0) {
+          list.innerHTML = '<div class="muted">No decisions yet.</div>';
+          return;
+        }
+
+        list.innerHTML = "";
+        items.forEach(d => {
+          const row = document.createElement("div");
+          row.className = "history-item";
+
+          const main = document.createElement("div");
+          main.className = "history-main";
+
+          const actionBadge = document.createElement("span");
+          actionBadge.className = "badge badge-decision";
+          actionBadge.textContent = d.action;
+          main.appendChild(actionBadge);
+
+          if (d.userName) {
+            const who = document.createElement("span");
+            who.textContent = d.userName;
+            main.appendChild(who);
+          }
+
+          if (d.notes) {
+            const notes = document.createElement("span");
+            notes.className = "history-notes";
+            notes.textContent = `– ${d.notes}`;
+            main.appendChild(notes);
+          }
+
+          const time = document.createElement("span");
+          time.className = "history-time";
+          time.textContent = new Date(d.createdAt).toLocaleString();
+
+          row.appendChild(main);
+          row.appendChild(time);
+          list.appendChild(row);
+        });
+      } catch (err) {
+        console.error(err);
+        list.innerHTML = '<div class="muted">Error loading history.</div>';
+      }
+    }
+
+    async function sendDecision(alertId, action) {
+      const statusText = document.getElementById("actionStatus");
+      statusText.textContent = "Submitting decision…";
+
+      const body = {
+        action: action,
+        userId: 1,
+        notes: `Decision taken from dashboard: ${action}`
+      };
+
+      try {
+        const resp = await fetch(`${baseUrl}/api/Alerts/${alertId}/decision`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+
+        if (!resp.ok) {
+          const text = await resp.text();
+          statusText.textContent = `Error: ${resp.status} – ${text}`;
+          return;
+        }
+
+        statusText.textContent = `Decision ${action} recorded. Refreshing data…`;
+
+        await loadMetrics();
+        await loadRecentAlerts();
+        await loadActiveAlert();
+      } catch (err) {
+        console.error(err);
+        statusText.textContent = "Error submitting decision.";
+      }
+    }
+
+    async function loadMetrics() {
+      try {
+        const resp = await fetch(`${baseUrl}/api/Metrics/overview${buildSiteQuery()}`);
+        if (!resp.ok) return;
+
+        const m = await resp.json();
+
+        document.getElementById("mTotalAlerts").textContent = m.totalAlerts;
+        document.getElementById("mActiveAlerts").textContent = m.activeAlerts;
+        document.getElementById("mBands").textContent =
+          `${m.redAlerts} / ${m.yellowAlerts} / ${m.greenAlerts}`;
+        document.getElementById("mDecisions").textContent =
+          `${m.goDecisions} / ${m.holdDecisions} / ${m.escalateDecisions}`;
+        document.getElementById("mAssets").textContent =
+          `${m.assetsWithFeed} / ${m.totalAssets}`;
+        document.getElementById("mCoverage").textContent =
+          m.coveragePercent != null ? `${m.coveragePercent.toFixed(1)}%` : "–";
+
+        if (m.lastDecisionAt) {
+          document.getElementById("metricsUpdated").textContent =
+            `Last decision recorded at ${new Date(m.lastDecisionAt).toLocaleString()}`;
+        } else {
+          document.getElementById("metricsUpdated").textContent =
+            "No decisions recorded yet.";
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function loadRecentAlerts() {
+      const listEl = document.getElementById("recentAlertsList");
+      listEl.innerHTML = '<div class="muted">Loading…</div>';
+
+      try {
+        const resp = await fetch(`${baseUrl}/api/Alerts${buildSiteQuery()}`);
+        if (!resp.ok) {
+          listEl.innerHTML = '<div class="muted">Unable to load alerts.</div>';
+          return;
+        }
+
+        recentAlertsCache = await resp.json();
+        renderRecentAlerts();
+      } catch (err) {
+        console.error(err);
+        listEl.innerHTML = '<div class="muted">Error loading alerts.</div>';
+      }
+    }
+
+    function renderRecentAlerts() {
+      const listEl = document.getElementById("recentAlertsList");
+      const bandFilter = document.getElementById("filterBand").value;
+      const statusFilter = document.getElementById("filterStatus").value;
+
+      if (!recentAlertsCache || recentAlertsCache.length === 0) {
+        listEl.innerHTML = '<div class="muted">No alerts yet.</div>';
+        return;
+      }
+
+      let alerts = [...recentAlertsCache];
+
+      alerts.sort((a, b) => {
+        const da = a.detectedAt ? new Date(a.detectedAt).getTime() : 0;
+        const db = b.detectedAt ? new Date(b.detectedAt).getTime() : 0;
+        return db - da;
+      });
+
+      if (bandFilter) {
+        alerts = alerts.filter(a =>
+          (a.impactBand || "").toUpperCase() === bandFilter
+        );
+      }
+      if (statusFilter) {
+        alerts = alerts.filter(a =>
+          (a.status || "").toUpperCase() === statusFilter
+        );
+      }
+
+      alerts = alerts.slice(0, 5);
+
+      if (alerts.length === 0) {
+        listEl.innerHTML = '<div class="muted">No alerts match filters.</div>';
+        return;
+      }
+
+      listEl.innerHTML = "";
+      alerts.forEach(a => {
+        const item = document.createElement("div");
+        item.className = "recent-item";
+
+        const band = a.impactBand || "UNKNOWN";
+        const bandClass = badgeBandClass(band);
+        const status = a.status || "UNKNOWN";
+        const decision = a.currentDecision;
+        const timeText = a.detectedAt
+          ? new Date(a.detectedAt).toLocaleString()
+          : "";
+
+        item.innerHTML = `
+          <div class="recent-title-row">
+            <span class="recent-title" title="${a.title}">${a.title}</span>
+          </div>
+          <div class="recent-meta">
+            <span class="badge ${bandClass}">${band}</span>
+            <span class="badge badge-status">${status}</span>
+            ${decision ? `<span class="badge badge-decision">${decision}</span>` : ""}
+            <span class="recent-time">${timeText}</span>
+          </div>
+        `;
+        listEl.appendChild(item);
+      });
+    }
+
+    function attachFilterHandlers() {
+      document.getElementById("filterBand").onchange = renderRecentAlerts;
+      document.getElementById("filterStatus").onchange = renderRecentAlerts;
+    }
+
+    async function refreshAll() {
+      await Promise.all([
+        loadActiveAlert(),
+        loadMetrics(),
+        loadRecentAlerts()
+      ]);
+    }
+
+    // Initial load
+    attachFilterHandlers();
+    loadSites();
+    refreshAll();
+  </script>
+</body>
+</html>
