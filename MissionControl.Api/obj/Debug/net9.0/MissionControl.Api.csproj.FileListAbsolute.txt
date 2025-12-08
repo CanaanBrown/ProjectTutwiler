@@ -270,3 +270,4 @@ C:\Users\cbb4b\OneDrive\Desktop\Project Tutweiler\ProjectTutwiler\MissionControl
 C:\Users\cbb4b\OneDrive\Desktop\Project Tutweiler\ProjectTutwiler\MissionControl.Api\obj\Debug\net9.0\MissionControl.Api.pdb
 C:\Users\cbb4b\OneDrive\Desktop\Project Tutweiler\ProjectTutwiler\MissionControl.Api\obj\Debug\net9.0\MissionControl.Api.genruntimeconfig.cache
 C:\Users\cbb4b\OneDrive\Desktop\Project Tutweiler\ProjectTutwiler\MissionControl.Api\obj\Debug\net9.0\ref\MissionControl.Api.dll
+C:\Users\cbb4b\OneDrive\Desktop\Project Tutweiler\ProjectTutwiler\MissionControl.Api\obj\Debug\net9.0\MissionControl.Api.sourcelink.json
