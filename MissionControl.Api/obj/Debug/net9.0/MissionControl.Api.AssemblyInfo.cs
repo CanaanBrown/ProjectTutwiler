@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MissionControl.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e55a874babe283afa8c40dd506705a2ee72afe53")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5734d9e54d5307ab5cc08077aee43d519b939688")]
 [assembly: System.Reflection.AssemblyProductAttribute("MissionControl.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MissionControl.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -2,367 +2,1177 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Mission Control – Prototype</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mission Control – Alerts Dashboard</title>
+  <link rel="stylesheet" href="styles/common.css" />
   <style>
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       margin: 0;
-      padding: 1.5rem;
-      background: #0f172a;
-      color: #e5e7eb;
+      padding: 0;
+      background: #000000;
+      color: #ffffff;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-    h1 {
-      margin-bottom: 0.15rem;
-    }
-    .subtitle {
-      color: #9ca3af;
-      margin-bottom: 0;
-    }
-    .header-row {
+
+    /* Header */
+    .header {
+      background: #111827;
+      border-bottom: 2px solid #00ffff;
+      padding: 1.25rem 2rem;
       display: flex;
       justify-content: space-between;
-      align-items: flex-end;
-      margin-bottom: 1.25rem;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0, 255, 255, 0.1);
     }
-    .site-selector {
-      text-align: right;
-      font-size: 0.8rem;
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
     }
-    .site-selector label {
-      display: block;
-      margin-bottom: 0.15rem;
+
+    .logo {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #00ffff;
+      letter-spacing: -0.02em;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      margin-left: 1rem;
+    }
+
+    .nav-link {
+      color: #9ca3af;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      position: relative;
+      padding: 0.25rem 0;
+    }
+
+    .nav-link.active {
+      color: #00ffff;
+    }
+
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1.5rem;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #00ffff;
+    }
+
+    .nav-link:hover {
+      color: #00ffff;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .site-selector-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .datetime {
+      color: #9ca3af;
+      font-size: 0.875rem;
+    }
+
+    .datetime .time {
+      color: #00ffff;
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .icon-btn {
+      background: rgba(0, 255, 255, 0.05);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      color: #9ca3af;
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .icon-btn:hover {
+      border-color: #00ffff;
+      color: #00ffff;
+      background: rgba(0, 255, 255, 0.1);
+      transform: translateY(-1px);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+    }
+
+    /* Metrics Cards */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.75rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .metric-card {
+      background: linear-gradient(135deg, #111827 0%, #0f172a 100%);
+      border: 1px solid #00ffff;
+      border-radius: 0.75rem;
+      padding: 1.75rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #00ffff, transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 255, 255, 0.15);
+      border-color: #06b6d4;
+    }
+
+    .metric-card:hover::before {
+      opacity: 1;
+    }
+
+    .metric-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #00ffff;
+      margin-bottom: 0.75rem;
+      text-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    }
+
+    .metric-label {
+      font-size: 0.8125rem;
       color: #9ca3af;
       text-transform: uppercase;
       letter-spacing: 0.08em;
+      font-weight: 500;
     }
-    .site-selector select {
-      background: #020617;
-      color: #e5e7eb;
-      border: 1px solid #1f2937;
-      border-radius: 999px;
-      padding: 0.25rem 0.75rem;
-      font-size: 0.8rem;
-    }
-    .grid {
+
+    /* Grid Layout */
+    .dashboard-grid {
       display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 1.5rem;
-      align-items: flex-start;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-bottom: 2.5rem;
     }
+
+    @media (max-width: 1200px) {
+      .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.75rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    }
+
+    /* Card Styles */
     .card {
       background: #111827;
+      border: 1px solid #00ffff;
       border-radius: 0.75rem;
-      padding: 1.25rem 1.5rem;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.35);
-      border: 1px solid #1f2937;
+      padding: 1.75rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
     }
-    .card h2 {
-      margin: 0 0 0.75rem;
-      font-size: 1.1rem;
+
+    .card:hover {
+      box-shadow: 0 8px 24px rgba(0, 255, 255, 0.1);
+      border-color: #06b6d4;
     }
-    .pill-row {
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+
+    .card-actions {
       display: flex;
       gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 0.75rem;
     }
-    .pill {
-      display: inline-flex;
+
+    /* Alert List */
+    .alert-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-height: 450px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    .alert-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .alert-list::-webkit-scrollbar-track {
+      background: #0f172a;
+      border-radius: 3px;
+    }
+
+    .alert-list::-webkit-scrollbar-thumb {
+      background: rgba(0, 255, 255, 0.3);
+      border-radius: 3px;
+    }
+
+    .alert-list::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 255, 255, 0.5);
+    }
+
+    .alert-item {
+      display: flex;
       align-items: center;
-      padding: 0.25rem 0.6rem;
-      border-radius: 999px;
+      gap: 1rem;
+      padding: 1rem;
+      background: #0f172a;
+      border-left: 4px solid #00ffff;
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      margin-bottom: 0.5rem;
+    }
+
+    .alert-item:hover {
+      background: rgba(0, 255, 255, 0.08);
+      border-left-color: #06b6d4;
+      transform: translateX(4px);
+    }
+
+    .alert-id {
+      color: #00ffff;
+      font-weight: 700;
+      font-size: 0.875rem;
+      min-width: 90px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .alert-content {
+      flex: 1;
+    }
+
+    .alert-title {
+      color: #ffffff;
+      font-size: 0.875rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .alert-meta {
+      color: #9ca3af;
+      font-size: 0.75rem;
+    }
+
+    /* Progress Circle */
+    .progress-circle {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 4px solid #00ffff;
+      background: rgba(0, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #00ffff;
+      margin-right: 1.5rem;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+      flex-shrink: 0;
+    }
+
+    /* Status Legend */
+    .status-legend {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+    }
+
+    .legend-color.new { background: #f97316; }
+    .legend-color.progress { background: #00ffff; }
+    .legend-color.suspended { background: #f97316; }
+    .legend-color.closed { background: #6b7280; }
+    .legend-color.due { background: #eab308; }
+
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #ffffff;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      border-radius: 0.5rem;
+      padding: 0.875rem;
+      color: #ffffff;
+      font-size: 0.875rem;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #00ffff;
+      box-shadow: 0 0 0 3px rgba(0, 255, 255, 0.15);
+      background: #111827;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    /* Radio Buttons */
+    .radio-group {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .radio-option input[type="radio"] {
+      width: auto;
+      accent-color: #00ffff;
+    }
+
+    .radio-option label {
+      margin: 0;
+      cursor: pointer;
+    }
+
+    /* Checkboxes */
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .checkbox-option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .checkbox-option input[type="checkbox"] {
+      width: auto;
+      accent-color: #00ffff;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00ffff 0%, #06b6d4 100%);
+      color: #000000;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0, 255, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #06b6d4 0%, #00ffff 100%);
+      box-shadow: 0 6px 16px rgba(0, 255, 255, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #00ffff;
+      border: 1px solid #00ffff;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(0, 255, 255, 0.1);
+      border-color: #06b6d4;
+    }
+
+    .btn-sm {
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid rgba(0, 255, 255, 0.2);
+      padding-bottom: 0.5rem;
+    }
+
+    .tab {
+      padding: 0.875rem 1.75rem;
+      background: transparent;
+      border: none;
+      color: #9ca3af;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      position: relative;
+    }
+
+    .tab:hover {
+      color: #00ffff;
+    }
+
+    .tab.active {
+      color: #00ffff;
+      border-bottom-color: #00ffff;
+    }
+
+    /* Tab Content */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Table */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #0f172a;
+      border-bottom: 2px solid #00ffff;
+    }
+
+    th {
+      padding: 0.75rem;
+      text-align: left;
+      color: #ffffff;
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      font-weight: 600;
     }
-    .pill-tlp {
-      background: #4b5563;
+
+    td {
+      padding: 0.75rem;
+      border-bottom: 1px solid #1f2937;
       color: #e5e7eb;
+      font-size: 0.875rem;
     }
-    .pill-red { background: #7f1d1d; color: #fecaca; }
-    .pill-yellow { background: #854d0e; color: #fef3c7; }
-    .pill-green { background: #065f46; color: #bbf7d0; }
-    .pill-status {
-      background: #1d4ed8;
-      color: #bfdbfe;
+
+    tbody tr:hover {
+      background: rgba(0, 255, 255, 0.08);
     }
-    .pill-decision {
-      background: #047857;
-      color: #bbf7d0;
+
+    /* Hidden */
+    .hidden {
+      display: none !important;
     }
-    .label {
+
+    /* Active Alert Section */
+    .active-alert-section {
+      margin-bottom: 2rem;
+    }
+
+    .alert-detail-card {
+      background: #111827;
+      border: 1px solid #00ffff;
+      border-radius: 0.75rem;
+      padding: 1.75rem;
+      box-shadow: 0 4px 16px rgba(0, 255, 255, 0.1);
+    }
+
+    .alert-badges {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
       font-size: 0.75rem;
-      color: #9ca3af;
+      font-weight: 500;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 0.25rem;
     }
-    .value {
-      font-size: 0.95rem;
+
+    .badge-red { background: #7f1d1d; color: #fecaca; }
+    .badge-yellow { background: #854d0e; color: #fef3c7; }
+    .badge-green { background: #065f46; color: #bbf7d0; }
+    .badge-blue { background: #1d4ed8; color: #bfdbfe; }
+
+    .action-buttons {
+      display: flex;
+      gap: 1.25rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+    }
+
+    .btn-success:hover {
+      box-shadow: 0 6px 16px rgba(22, 163, 74, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-warning {
+      background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+      color: #000000;
+      box-shadow: 0 4px 12px rgba(234, 179, 8, 0.3);
+    }
+
+    .btn-warning:hover {
+      box-shadow: 0 6px 16px rgba(234, 179, 8, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+
+    .btn-danger:hover {
+      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
+      transform: translateY(-1px);
+    }
+
+    /* Filters */
+    .filters {
+      display: flex;
+      gap: 1.25rem;
+      margin-bottom: 1.75rem;
+      flex-wrap: wrap;
+      padding: 1rem;
+      background: rgba(0, 255, 255, 0.03);
+      border-radius: 0.5rem;
+      border: 1px solid rgba(0, 255, 255, 0.1);
+    }
+
+    .filters select {
+      min-width: 160px;
+      flex: 1;
+      max-width: 200px;
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      color: #9ca3af;
+      padding: 2rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      color: #9ca3af;
+      padding: 3rem;
+    }
+
+    /* Login Page */
+    .login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, #000000 0%, #0a0a0a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 2rem;
+    }
+
+    .login-card {
+      background: #111827;
+      border: 2px solid #00ffff;
+      border-radius: 0.75rem;
+      padding: 3rem;
+      max-width: 450px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(0, 255, 255, 0.2);
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-header .logo {
+      font-size: 2rem;
       margin-bottom: 0.5rem;
     }
-    .muted {
-      color: #6b7280;
+
+    .login-header .subtitle {
+      color: #9ca3af;
+      font-size: 0.875rem;
     }
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .autofill-buttons {
+      display: flex;
       gap: 0.75rem;
+      margin-top: 0.5rem;
     }
-    .metric {
-      padding: 0.6rem 0.75rem;
-      border-radius: 0.5rem;
-      background: #020617;
-      border: 1px solid #1f2937;
-    }
-    .metric-label {
+
+    .autofill-btn {
+      flex: 1;
+      padding: 0.5rem;
       font-size: 0.75rem;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      color: #00ffff;
+    }
+
+    .autofill-btn:hover {
+      background: rgba(0, 255, 255, 0.2);
+      border-color: #00ffff;
+    }
+
+    .login-footer {
+      margin-top: 1.5rem;
+      text-align: center;
+      font-size: 0.875rem;
       color: #9ca3af;
-      margin-bottom: 0.15rem;
     }
-    .metric-value {
-      font-size: 1.1rem;
-      font-weight: 500;
-    }
-    .btn-row {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-    button {
-      border: none;
-      border-radius: 999px;
-      padding: 0.45rem 0.9rem;
-      font-size: 0.85rem;
+
+    .login-footer a {
+      color: #00ffff;
       cursor: pointer;
-      font-weight: 500;
-    }
-    .btn-go { background: #16a34a; color: white; }
-    .btn-hold { background: #eab308; color: #111827; }
-    .btn-escalate { background: #dc2626; color: white; }
-    .btn-go:disabled,
-    .btn-hold:disabled,
-    .btn-escalate:disabled {
-      opacity: 0.4;
-      cursor: default;
-    }
-    .status-bar {
-      margin-top: 0.75rem;
-      font-size: 0.8rem;
-      color: #9ca3af;
-    }
-    a {
-      color: #60a5fa;
       text-decoration: none;
-      font-size: 0.8rem;
     }
 
-    .divider {
-      border: none;
-      border-top: 1px solid #1f2937;
-      margin: 1.25rem 0 0.75rem;
+    .login-footer a:hover {
+      text-decoration: underline;
     }
 
-    /* Recent alerts */
-    .recent-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.35rem;
-    }
-    .recent-header {
-      font-size: 0.85rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #9ca3af;
-    }
-    .recent-filters {
-      display: flex;
-      gap: 0.4rem;
-      font-size: 0.75rem;
-    }
-    .recent-filters select {
-      background: #020617;
-      color: #e5e7eb;
-      border: 1px solid #1f2937;
-      border-radius: 999px;
-      padding: 0.1rem 0.6rem;
-      font-size: 0.75rem;
-    }
-    .recent-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      max-height: 220px;
-      overflow-y: auto;
-    }
-    .recent-item {
-      padding: 0.45rem 0.55rem;
+    .error-message {
+      background: rgba(220, 38, 38, 0.1);
+      border: 1px solid rgba(220, 38, 38, 0.3);
+      color: #fecaca;
+      padding: 0.75rem;
       border-radius: 0.5rem;
-      background: #020617;
-      border: 1px solid #1f2937;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
     }
-    .recent-title-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.15rem;
-    }
-    .recent-title {
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: #e5e7eb;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .recent-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.25rem 0.4rem;
-      align-items: center;
-      font-size: 0.7rem;
-      color: #9ca3af;
-    }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.1rem 0.5rem;
-      border-radius: 999px;
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-    .badge-band-red { background: #7f1d1d; color: #fecaca; }
-    .badge-band-yellow { background: #854d0e; color: #fef3c7; }
-    .badge-band-green { background: #065f46; color: #bbf7d0; }
-    .badge-band-unknown { background: #4b5563; color: #e5e7eb; }
-    .badge-status { background: #1f2937; color: #bfdbfe; }
-    .badge-decision { background: #0f766e; color: #ccfbf1; }
-    .recent-time { color: #6b7280; }
 
-    /* History */
-    .history-header {
-      font-size: 0.85rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #9ca3af;
-      margin-top: 1rem;
-      margin-bottom: 0.35rem;
+    .success-message {
+      background: rgba(22, 163, 74, 0.1);
+      border: 1px solid rgba(22, 163, 74, 0.3);
+      color: #bbf7d0;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
     }
-    .history-list {
-      font-size: 0.75rem;
-      max-height: 120px;
-      overflow-y: auto;
+
+    .pending-approval-message {
+      background: rgba(234, 179, 8, 0.1);
+      border: 1px solid rgba(234, 179, 8, 0.3);
+      color: #fef3c7;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .account-detail-content {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
-    }
-    .history-item {
-      display: flex;
-      justify-content: space-between;
-      gap: 0.5rem;
-    }
-    .history-main {
-      display: flex;
-      gap: 0.35rem;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .history-notes {
-      color: #9ca3af;
-    }
-    .history-time {
-      color: #6b7280;
-      white-space: nowrap;
+      gap: 1.5rem;
     }
 
-    /* Playbook */
-    .playbook {
-      margin-top: 1rem;
+    .account-detail-section {
+      background: rgba(0, 255, 255, 0.05);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      border-radius: 0.5rem;
+      padding: 1.25rem;
     }
-    .playbook-list {
-      margin: 0.15rem 0 0;
-      padding-left: 1.1rem;
-      font-size: 0.85rem;
-      color: #d1d5db;
+
+    .account-detail-section h3 {
+      margin: 0 0 1rem 0;
+      color: #00ffff;
+      font-size: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .account-detail-row {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 1rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .account-detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .account-detail-label {
+      color: #9ca3af;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .account-detail-value {
+      color: #ffffff;
+      font-size: 0.875rem;
+      word-break: break-word;
+    }
+
+    .view-detail-btn {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.8125rem;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      color: #00ffff;
+      cursor: pointer;
+      border-radius: 0.375rem;
+      margin-right: 0.5rem;
+    }
+
+    .view-detail-btn:hover {
+      background: rgba(0, 255, 255, 0.2);
+      border-color: #00ffff;
     }
   </style>
 </head>
 <body>
-  <div class="header-row">
-    <div>
-      <h1>Mission Control – Prototype</h1>
-      <div class="subtitle">Human-impact triage view powering this group project.</div>
+  <!-- Header -->
+  <header class="header" id="header" style="display: none;">
+    <div class="header-left">
+      <div class="logo">Mission Control</div>
+      <nav class="nav-links">
+        <a href="#" class="nav-link active" data-view="dashboard">Home</a>
+        <a href="#" class="nav-link" data-view="incidents">Incidents</a>
+      </nav>
     </div>
-    <div class="site-selector">
-      <label for="siteSelector">Site</label>
-      <select id="siteSelector">
+    <div class="header-right">
+      <div class="site-selector-wrapper">
+        <label for="siteSelector" style="font-size: 0.75rem; color: #9ca3af; margin-right: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Site</label>
+        <select id="siteSelector" style="background: #0f172a; border: 1px solid rgba(0, 255, 255, 0.3); color: #ffffff; padding: 0.5rem 1rem; border-radius: 0.375rem; font-size: 0.875rem; cursor: pointer;">
         <option value="">All Sites</option>
       </select>
     </div>
+      <div class="datetime">
+        <span id="currentDate"></span> | <span class="time" id="currentTime"></span>
   </div>
+      <div class="header-actions">
+        <button class="icon-btn" id="btnPendingApprovals" title="Pending Approvals" style="display: none;" onclick="showAdminApprovalModal()">
+          <span style="position: relative;">
+            ⚠
+            <span id="pendingCountBadge" style="display: none; position: absolute; top: -8px; right: -8px; background: #dc2626; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center;">0</span>
+          </span>
+        </button>
+        <span id="userName" style="color: #9ca3af; font-size: 0.875rem; margin-right: 0.5rem;">User</span>
+        <button class="icon-btn" title="Settings">⚙</button>
+        <button class="icon-btn" title="Logout" onclick="logout()">✕</button>
+      </div>
+    </div>
+  </header>
 
-  <div class="grid">
-    <!-- Left: Active Alert + History + Recent Alerts -->
-    <div class="card" id="activeAlertCard">
-      <h2>Current Active Alert</h2>
-      <div id="noAlert" class="muted">No ACTIVE alerts in queue.</div>
-
-      <div id="alertDetails" style="display:none;">
-        <div class="pill-row">
-          <span class="pill pill-tlp" id="tlpPill"></span>
-          <span class="pill" id="impactPill"></span>
-          <span class="pill pill-status" id="statusPill"></span>
-          <span class="pill pill-decision" id="decisionPill" style="display:none;"></span>
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Login Page (shown initially) -->
+    <div id="loginPage" class="login-overlay">
+      <div class="login-card">
+        <div class="login-header">
+          <div class="logo">Mission Control</div>
+          <div class="subtitle">Security Alert Management System</div>
         </div>
 
-        <div class="label">Title</div>
-        <div class="value" id="alertTitle"></div>
+        <div id="loginErrorMessage" class="error-message hidden"></div>
+        <div id="loginSuccessMessage" class="success-message hidden"></div>
 
-        <div class="label">Description</div>
-        <div class="value" id="alertDescription"></div>
+        <!-- Login Form -->
+        <form id="loginForm" class="login-form">
+          <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <input type="email" id="loginEmail" placeholder="Enter your email" required />
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" placeholder="Enter your password" required />
+          </div>
+          <div class="autofill-buttons">
+            <button type="button" class="autofill-btn" onclick="autofillLogin('admin')">Auto-fill Admin</button>
+            <button type="button" class="autofill-btn" onclick="autofillLogin('user')">Auto-fill User</button>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">Sign In</button>
+        </form>
 
-        <div class="label">Affected Function</div>
-        <div class="value" id="alertFunction"></div>
-
-        <div class="label">Detected</div>
-        <div class="value" id="alertDetected"></div>
-
-        <div class="playbook">
-          <div class="label">Suggested Next Steps</div>
-          <ul id="playbookList" class="playbook-list"></ul>
+        <div class="login-footer">
+          <p>Don't have an account? <a onclick="showCreateAccount()">Create Account</a></p>
         </div>
 
-        <div class="btn-row">
-          <button class="btn-go" id="btnGo">GO</button>
-          <button class="btn-hold" id="btnHold">HOLD</button>
-          <button class="btn-escalate" id="btnEscalate">ESCALATE</button>
+        <!-- Pending Approval Message -->
+        <div id="pendingApprovalMessage" class="pending-approval-message hidden">
+          <p><strong>Account Pending Approval</strong></p>
+          <p style="margin-top: 0.5rem; font-size: 0.8125rem;">Your account has been created and is awaiting admin approval. You will be notified once approved.</p>
         </div>
-
-        <div class="status-bar" id="actionStatus"></div>
-
-        <div class="history-header">Decision History</div>
-        <div id="historyList" class="history-list">
-          <div class="muted">No decisions yet.</div>
         </div>
       </div>
 
-      <hr class="divider" />
+    <!-- Create Account Modal -->
+    <div id="createAccountModal" class="modal-overlay hidden">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Create Account</h2>
+          <button class="modal-close" onclick="closeCreateAccountModal()">&times;</button>
+        </div>
+        <form id="createAccountForm">
+          <div class="form-group">
+            <label for="createName">Full Name *</label>
+            <input type="text" id="createName" required placeholder="Enter your full name" />
+          </div>
+          <div class="form-group">
+            <label for="createEmail">Email *</label>
+            <input type="email" id="createEmail" required placeholder="Enter your email" />
+          </div>
+          <div class="form-group">
+            <label for="createPassword">Password *</label>
+            <input type="password" id="createPassword" required placeholder="Create a password" minlength="6" />
+          </div>
+          <div class="form-group">
+            <label for="createConfirmPassword">Confirm Password *</label>
+            <input type="password" id="createConfirmPassword" required placeholder="Confirm your password" />
+          </div>
+          <div class="form-group">
+            <label for="createSite">Site/Company *</label>
+            <input type="text" id="createSite" required placeholder="Enter your site or company name" />
+          </div>
+          <div class="form-group">
+            <label for="createRole">Role *</label>
+            <input type="text" id="createRole" required placeholder="Enter your role (e.g., Clinical Engineering, Lab Director)" />
+          </div>
+        <div class="btn-row">
+            <button type="submit" class="btn btn-primary">Create Account</button>
+            <button type="button" class="btn btn-secondary" onclick="closeCreateAccountModal()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
-      <div class="recent-header-row">
-        <div class="recent-header">Recent Alerts</div>
-        <div class="recent-filters">
-          <select id="filterBand">
+    <!-- Admin Approval Modal -->
+    <div id="adminApprovalModal" class="modal-overlay hidden">
+      <div class="modal" style="max-width: 1000px; max-height: 90vh; overflow-y: auto;">
+        <div class="modal-header">
+          <h2>Pending Account Approvals</h2>
+          <button class="modal-close" onclick="closeAdminApprovalModal()">&times;</button>
+        </div>
+        <div id="pendingAccountsList" class="table-container">
+          <div class="loading">Loading pending accounts...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account Detail Modal (for in-depth view) -->
+    <div id="accountDetailModal" class="modal-overlay hidden">
+      <div class="modal" style="max-width: 700px;">
+        <div class="modal-header">
+          <h2>Account Details</h2>
+          <button class="modal-close" onclick="closeAccountDetailModal()">&times;</button>
+        </div>
+        <div id="accountDetailContent" class="account-detail-content">
+          <!-- Content will be populated dynamically -->
+        </div>
+        <div class="modal-footer" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; gap: 1rem; justify-content: flex-end;">
+          <button class="btn btn-danger" id="btnRejectDetail" onclick="rejectAccountFromDetail()">Reject Account</button>
+          <button class="btn btn-success" id="btnApproveDetail" onclick="approveAccountFromDetail()">Approve Account</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard View -->
+    <div id="dashboardView" class="hidden">
+      <!-- Metrics Row -->
+      <div class="metrics-row">
+        <div class="metric-card">
+          <div class="metric-value" id="metricRunningAlerts">0</div>
+          <div class="metric-label">Running Event Alerts</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="metric247Alerts">0</div>
+          <div class="metric-label">Running 24/7 Alerts</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="metric30Days">0</div>
+          <div class="metric-label">Total Alerts in Past 30 Days</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="metricTotal">0</div>
+          <div class="metric-label">Total Alerts</div>
+        </div>
+      </div>
+
+      <!-- Dashboard Grid -->
+      <div class="dashboard-grid">
+        <!-- My Alerts Card -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">My Alerts</h3>
+          </div>
+          <div style="display: flex; align-items: flex-start; gap: 1.5rem;">
+            <div class="progress-circle" id="myAlertsCount">0</div>
+            <div style="flex: 1;">
+              <div class="alert-list" id="myAlertsList">
+                <div class="loading">Loading alerts...</div>
+              </div>
+              <div class="status-legend">
+                <div class="legend-item">
+                  <div class="legend-color new"></div>
+                  <span>New (<span id="countNew">0</span>)</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color progress"></div>
+                  <span>In Progress (<span id="countProgress">0</span>)</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color suspended"></div>
+                  <span>Suspended (<span id="countSuspended">0</span>)</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color closed"></div>
+                  <span>Closed (<span id="countClosed">0</span>)</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color due"></div>
+                  <span>Due (<span id="countDue">0</span>)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Incoming Alerts Card -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Incoming Alerts</h3>
+            <button class="btn btn-secondary btn-sm" onclick="refreshIncomingAlerts()">Refresh</button>
+          </div>
+          <div class="alert-list" id="incomingAlertsList">
+            <div class="loading">Loading incoming alerts...</div>
+          </div>
+        </div>
+
+        <!-- Create Alert / Incident Report Card -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title" id="createCardTitle">Create Alert</h3>
+          </div>
+          <form id="createAlertForm">
+            <div class="form-group">
+              <label for="alertTitle">Alert Title</label>
+              <input type="text" id="alertTitle" placeholder="Enter alert title..." required />
+            </div>
+            <div class="form-group">
+              <label for="alertDescription">Description</label>
+              <textarea id="alertDescription" placeholder="Enter alert description..." required></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="alertPriority">Priority</label>
+                <select id="alertPriority">
+                  <option value="LOW">Low</option>
+                  <option value="MEDIUM">Medium</option>
+                  <option value="HIGH">High</option>
+                  <option value="CRITICAL">Critical</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="alertIndustry">Industry</label>
+                <select id="alertIndustry">
+                  <option value="Healthcare">Healthcare</option>
+                  <option value="Biotech">Biotech</option>
+                  <option value="Pharmaceutical">Pharmaceutical</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="alertIncidentType">Incident Type</label>
+              <select id="alertIncidentType">
+                <option value="Security Breach">Security Breach</option>
+                <option value="Data Breach">Data Breach</option>
+                <option value="Phishing">Phishing</option>
+                <option value="Vulnerability">Vulnerability</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+              + Create Alert
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Active Alert Section -->
+      <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr;">
+        <!-- Current Active Alert -->
+        <div class="card">
+          <h3 class="card-title">Current Active Alert</h3>
+          <div id="noActiveAlert" class="empty-state">No ACTIVE alerts in queue.</div>
+          <div id="activeAlertDetails" class="alert-detail-card hidden">
+            <div class="alert-badges" id="activeAlertBadges"></div>
+            <div class="form-group">
+              <label>Title</label>
+              <div id="activeAlertTitle" style="padding: 0.75rem; background: #0f172a; border-radius: 0.25rem; border: 1px solid rgba(0, 255, 255, 0.1);"></div>
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <div id="activeAlertDescription" style="padding: 0.75rem; background: #0f172a; border-radius: 0.25rem; border: 1px solid rgba(0, 255, 255, 0.1);"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Affected Function</label>
+                <div id="activeAlertFunction" style="padding: 0.75rem; background: #0f172a; border-radius: 0.25rem; border: 1px solid rgba(0, 255, 255, 0.1);"></div>
+              </div>
+              <div class="form-group">
+                <label>Detected</label>
+                <div id="activeAlertDetected" style="padding: 0.75rem; background: #0f172a; border-radius: 0.25rem; border: 1px solid rgba(0, 255, 255, 0.1);"></div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Suggested Next Steps</label>
+              <ul id="playbookList" class="playbook-list" style="padding: 0.75rem; background: #0f172a; border-radius: 0.25rem; border: 1px solid rgba(0, 255, 255, 0.1); margin-top: 0.5rem;"></ul>
+            </div>
+            <div class="action-buttons">
+              <button class="btn btn-success" id="btnGo">GO</button>
+              <button class="btn btn-warning" id="btnHold">HOLD</button>
+              <button class="btn btn-danger" id="btnEscalate">ESCALATE</button>
+            </div>
+            <div id="actionStatus" class="status-bar" style="margin-top: 1rem;"></div>
+            <div class="form-group" style="margin-top: 1.5rem;">
+              <label>Decision History</label>
+              <div id="historyList" class="history-list" style="padding: 0.75rem; background: #0f172a; border-radius: 0.25rem; border: 1px solid rgba(0, 255, 255, 0.1); margin-top: 0.5rem; max-height: 200px; overflow-y: auto;"></div>
+            </div>
+          </div>
+          <hr style="border: none; border-top: 1px solid rgba(0, 255, 255, 0.2); margin: 1.5rem 0;" />
+          <div class="card-header" style="margin-bottom: 1rem; padding-bottom: 0.75rem;">
+            <h3 class="card-title" style="font-size: 1rem;">Recent Alerts</h3>
+            <div class="filters" style="margin: 0; padding: 0; background: transparent; border: none;">
+              <select id="filterBand" style="min-width: auto; max-width: 140px; font-size: 0.75rem; padding: 0.375rem 0.5rem;">
             <option value="">Band: All</option>
             <option value="RED">RED</option>
             <option value="YELLOW">YELLOW</option>
             <option value="GREEN">GREEN</option>
           </select>
-          <select id="filterStatus">
+              <select id="filterStatus" style="min-width: auto; max-width: 140px; font-size: 0.75rem; padding: 0.375rem 0.5rem;">
             <option value="">Status: All</option>
             <option value="ACTIVE">ACTIVE</option>
             <option value="RESOLVED">RESOLVED</option>
@@ -370,357 +1180,952 @@
           </select>
         </div>
       </div>
-      <div id="recentAlertsList" class="recent-list">
-        <div class="muted">Loading…</div>
+          <div id="recentAlertsList" class="alert-list" style="max-height: 300px;">
+            <div class="loading">Loading…</div>
       </div>
     </div>
 
-    <!-- Right: Metrics -->
+        <!-- Readiness & Coverage -->
     <div class="card">
-      <h2>Readiness & Coverage</h2>
-      <div class="metrics-grid" id="metricsGrid">
-        <div class="metric">
+          <h3 class="card-title">Readiness & Coverage</h3>
+          <div class="metrics-grid" style="grid-template-columns: 1fr; gap: 1rem; margin-top: 1rem;">
+            <div class="metric" style="padding: 1rem; background: #0f172a; border: 1px solid rgba(0, 255, 255, 0.2); border-radius: 0.5rem;">
           <div class="metric-label">Total Alerts</div>
-          <div class="metric-value" id="mTotalAlerts">0</div>
+              <div class="metric-value" id="mTotalAlerts" style="font-size: 1.5rem; color: #00ffff;">0</div>
         </div>
-        <div class="metric">
+            <div class="metric" style="padding: 1rem; background: #0f172a; border: 1px solid rgba(0, 255, 255, 0.2); border-radius: 0.5rem;">
           <div class="metric-label">Active Alerts</div>
-          <div class="metric-value" id="mActiveAlerts">0</div>
+              <div class="metric-value" id="mActiveAlerts" style="font-size: 1.5rem; color: #00ffff;">0</div>
         </div>
-        <div class="metric">
+            <div class="metric" style="padding: 1rem; background: #0f172a; border: 1px solid rgba(0, 255, 255, 0.2); border-radius: 0.5rem;">
           <div class="metric-label">RED / YELLOW / GREEN</div>
-          <div class="metric-value" id="mBands">0 / 0 / 0</div>
+              <div class="metric-value" id="mBands" style="font-size: 1.25rem; color: #ffffff;">0 / 0 / 0</div>
         </div>
-        <div class="metric">
+            <div class="metric" style="padding: 1rem; background: #0f172a; border: 1px solid rgba(0, 255, 255, 0.2); border-radius: 0.5rem;">
           <div class="metric-label">GO / HOLD / ESCALATE</div>
-          <div class="metric-value" id="mDecisions">0 / 0 / 0</div>
+              <div class="metric-value" id="mDecisions" style="font-size: 1.25rem; color: #ffffff;">0 / 0 / 0</div>
         </div>
-        <div class="metric">
+            <div class="metric" style="padding: 1rem; background: #0f172a; border: 1px solid rgba(0, 255, 255, 0.2); border-radius: 0.5rem;">
           <div class="metric-label">Assets with Ingest Feed</div>
-          <div class="metric-value" id="mAssets">0 / 0</div>
+              <div class="metric-value" id="mAssets" style="font-size: 1.25rem; color: #ffffff;">0 / 0</div>
         </div>
-        <div class="metric">
+            <div class="metric" style="padding: 1rem; background: #0f172a; border: 1px solid rgba(0, 255, 255, 0.2); border-radius: 0.5rem;">
           <div class="metric-label">Coverage</div>
-          <div class="metric-value" id="mCoverage">–</div>
+              <div class="metric-value" id="mCoverage" style="font-size: 1.5rem; color: #00ffff;">–</div>
         </div>
       </div>
-      <div class="status-bar" id="metricsUpdated"></div>
-      <div class="status-bar">
-        <a href="/swagger" target="_blank">Open Swagger UI</a>
+          <div id="metricsUpdated" class="status-bar" style="margin-top: 1rem; font-size: 0.75rem;"></div>
+          <div class="status-bar" style="margin-top: 0.5rem;">
+            <a href="/swagger" target="_blank" style="color: #00ffff; text-decoration: none; font-size: 0.875rem;">Open Swagger UI</a>
       </div>
     </div>
   </div>
 
+      <!-- Admin Tabs (Patches, Controls) -->
+      <div id="adminTabs" class="hidden">
+        <div class="tabs">
+          <button class="tab active" data-tab="patches">Patches</button>
+          <button class="tab" data-tab="controls">Controls</button>
+        </div>
+
+        <!-- Patches Tab -->
+        <div id="tab-patches" class="tab-content active">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Patch Management</h3>
+              <button class="btn btn-primary btn-sm" onclick="openPatchModal()">+ Add Patch</button>
+            </div>
+            <div class="filters">
+              <select id="filterPatchStatus">
+                <option value="">All Statuses</option>
+                <option value="PENDING">Pending</option>
+                <option value="APPLIED">Applied</option>
+                <option value="FAILED">Failed</option>
+              </select>
+            </div>
+            <div class="table-container">
+              <table id="patchesTable">
+                <thead>
+                  <tr>
+                    <th>Patch Name</th>
+                    <th>CVE</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="patchesTableBody">
+                  <tr><td colspan="5" class="loading">Loading patches...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls Tab -->
+        <div id="tab-controls" class="tab-content">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Security Controls</h3>
+              <button class="btn btn-primary btn-sm" onclick="openControlModal()">+ Add Control</button>
+            </div>
+            <div class="filters">
+              <select id="filterControlType">
+                <option value="">All Types</option>
+                <option value="PREVENTIVE">Preventive</option>
+                <option value="DETECTIVE">Detective</option>
+                <option value="CORRECTIVE">Corrective</option>
+              </select>
+              <select id="filterControlStatus">
+                <option value="">All Statuses</option>
+                <option value="ACTIVE">Active</option>
+                <option value="INACTIVE">Inactive</option>
+              </select>
+            </div>
+            <div class="table-container">
+              <table id="controlsTable">
+                <thead>
+                  <tr>
+                    <th>Control Name</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Effectiveness</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="controlsTableBody">
+                  <tr><td colspan="5" class="loading">Loading controls...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Incidents View -->
+    <div id="incidentsView" class="hidden">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">BioISAC Incident Report</h3>
+        </div>
+        <form id="incidentForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="incidentType">Incident Type</label>
+              <select id="incidentType">
+                <option value="">Select...</option>
+                <option value="Security Breach">Security Breach</option>
+                <option value="Data Breach">Data Breach</option>
+                <option value="Phishing">Phishing</option>
+                <option value="Malware">Malware</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="assignedTo">Assigned To</label>
+              <input type="text" id="assignedTo" placeholder="Enter name..." />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Severity Level</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="severityLow" name="severity" value="LOW" />
+                <label for="severityLow">Low</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="severityModerate" name="severity" value="MODERATE" />
+                <label for="severityModerate">Moderate</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="severityHigh" name="severity" value="HIGH" />
+                <label for="severityHigh">High</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="severityCritical" name="severity" value="CRITICAL" />
+                <label for="severityCritical">Critical</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Was any sensitive data affected?</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="dataYes" name="sensitiveData" value="YES" />
+                <label for="dataYes">Yes</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="dataNo" name="sensitiveData" value="NO" />
+                <label for="dataNo">No</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="dataUnknown" name="sensitiveData" value="UNKNOWN" />
+                <label for="dataUnknown">Unknown</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="incidentDateTime">Date & Time of Incident</label>
+              <input type="datetime-local" id="incidentDateTime" />
+            </div>
+            <div class="form-group">
+              <label for="incidentIndustry">Industry</label>
+              <select id="incidentIndustry">
+                <option value="">Select...</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Biotech">Biotech</option>
+                <option value="Pharmaceutical">Pharmaceutical</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Estimated Impact</label>
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="impactInternal" value="internal" />
+                <label for="impactInternal">Internal systems only</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="impactPartners" value="partners" />
+                <label for="impactPartners">Partners / Vendors affected</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="impactPublic" value="public" />
+                <label for="impactPublic">Public disclosure possible</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="incidentDescription">Description</label>
+            <textarea id="incidentDescription" rows="5" placeholder="Describe the incident..."></textarea>
+          </div>
+
+          <div class="action-buttons">
+            <button type="submit" class="btn btn-primary">Submit Incident Report</button>
+            <button type="button" class="btn btn-secondary" onclick="resetIncidentForm()">Reset</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="scripts/common.js"></script>
   <script>
-    const baseUrl = window.location.origin;
-    let currentSiteId = "";
-    let recentAlertsCache = [];
+    // Global state
+    let currentRole = null;
+    let currentSiteId = '';
+    let alertsCache = [];
+    let patchesCache = [];
+    let controlsCache = [];
 
-    function buildSiteQuery() {
-      return currentSiteId ? `?siteId=${currentSiteId}` : "";
+    // Initialize mock accounts storage
+    function initializeAccounts() {
+      if (!localStorage.getItem('accounts')) {
+        // Default admin account
+        const accounts = {
+          'admin@missioncontrol.com': {
+            userId: 1,
+            email: 'admin@missioncontrol.com',
+            password: 'admin123',
+            name: 'Admin User',
+            role: 'IT Security Lead',
+            siteId: 1,
+            approved: true,
+            createdAt: new Date().toISOString()
+          },
+          'user@missioncontrol.com': {
+            userId: 2,
+            email: 'user@missioncontrol.com',
+            password: 'user123',
+            name: 'Regular User',
+            role: 'Clinical Engineering',
+            siteId: 1,
+            approved: true,
+            createdAt: new Date().toISOString()
+          }
+        };
+        localStorage.setItem('accounts', JSON.stringify(accounts));
+      }
     }
 
-    function impactClassFor(band) {
-      const upper = (band || "").toUpperCase();
-      if (upper === "RED") return "pill-red";
-      if (upper === "YELLOW") return "pill-yellow";
-      if (upper === "GREEN") return "pill-green";
-      return "pill-tlp";
+    // Initialize
+    document.addEventListener('DOMContentLoaded', async () => {
+      updateDateTime();
+      setInterval(updateDateTime, 1000);
+
+      initializeAccounts();
+      await loadSitesForCreateAccount();
+
+      // Check for authenticated user
+      const authToken = localStorage.getItem('authToken');
+      const currentUser = localStorage.getItem('currentUser');
+      
+      if (authToken && currentUser) {
+        try {
+          const user = JSON.parse(currentUser);
+          if (user.approved) {
+            // User is logged in and approved
+            await loginUser(user.email, null, true);
+          } else {
+            // User is pending approval
+            showPendingApproval();
+          }
+        } catch (e) {
+          // Invalid user data, show login
+          showLogin();
+        }
+      } else {
+        showLogin();
+      }
+
+      setupEventHandlers();
+    });
+
+    function updateDateTime() {
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      const timeStr = now.toLocaleTimeString('en-US', { hour12: true });
+      document.getElementById('currentDate').textContent = dateStr;
+      document.getElementById('currentTime').textContent = timeStr;
     }
 
-    function badgeBandClass(band) {
-      const upper = (band || "").toUpperCase();
-      if (upper === "RED") return "badge-band-red";
-      if (upper === "YELLOW") return "badge-band-yellow";
-      if (upper === "GREEN") return "badge-band-green";
-      return "badge-band-unknown";
+    function showLogin() {
+      document.getElementById('loginPage').classList.remove('hidden');
+      document.getElementById('dashboardView').classList.add('hidden');
+      document.getElementById('header').style.display = 'none';
     }
 
-    function playbookForAlert(alert) {
-      const band = (alert.impactBand || "").toUpperCase();
-      const func = (alert.affectedFunction || "").toLowerCase();
-
-      // Very simple rules, just enough for demo
-      if (band === "RED" && func.includes("lab")) {
-        return [
-          "Notify lab supervisor and IT security within 30 minutes.",
-          "Apply interim controls (manual review or secondary checks).",
-          "Schedule a follow-up decision in 4 hours."
-        ];
-      }
-
-      if (band === "RED") {
-        return [
-          "Confirm scope and which systems are affected.",
-          "Put interim containment in place where possible.",
-          "Decide GO/HOLD/ESCALATE within the current shift."
-        ];
-      }
-
-      if (band === "YELLOW") {
-        return [
-          "Verify asset inventory and confirm this alert truly applies.",
-          "Document mitigation or compensating controls.",
-          "Re-evaluate within 24 hours if still on HOLD."
-        ];
-      }
-
-      if (band === "GREEN") {
-        return [
-          "Record the alert and any minor mitigations.",
-          "Fold into normal patch / maintenance workflow."
-        ];
-      }
-
-      return [
-        "Verify whether this alert actually applies to your environment.",
-        "Record a GO/HOLD/ESCALATE decision once understood."
-      ];
+    function showPendingApproval() {
+      document.getElementById('loginPage').classList.remove('hidden');
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('pendingApprovalMessage').classList.remove('hidden');
+      document.getElementById('dashboardView').classList.add('hidden');
+      document.getElementById('header').style.display = 'none';
     }
 
+    async function loginUser(email, password, skipPasswordCheck = false) {
+      const accounts = JSON.parse(localStorage.getItem('accounts') || '{}');
+      const user = accounts[email];
+
+      if (!user) {
+        showError('Invalid email or password.');
+        return false;
+      }
+
+      if (!skipPasswordCheck && user.password !== password) {
+        showError('Invalid email or password.');
+        return false;
+      }
+
+      if (!user.approved) {
+        showError('Your account is pending approval. Please wait for an admin to approve your account.');
+        return false;
+      }
+
+      // Set auth token and current user
+      localStorage.setItem('authToken', 'mock-token-' + Date.now());
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      localStorage.setItem('userRole', CommonUtils.isAdmin(user.role) ? 'admin' : 'user');
+
+      // Hide login, show dashboard
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('dashboardView').classList.remove('hidden');
+      document.getElementById('header').style.display = 'flex';
+      document.getElementById('loginForm').classList.remove('hidden');
+      document.getElementById('pendingApprovalMessage').classList.add('hidden');
+      hideError();
+      hideSuccess();
+
+      // Set user info in header
+      const userNameEl = document.getElementById('userName');
+      if (userNameEl) {
+        userNameEl.textContent = user.name || 'User';
+      }
+
+      // Set role and load dashboard
+      currentRole = CommonUtils.isAdmin(user.role) ? 'admin' : 'user';
+      if (currentRole === 'admin') {
+        document.getElementById('adminTabs').classList.remove('hidden');
+        document.getElementById('createCardTitle').textContent = 'Create Alert';
+        const btnPending = document.getElementById('btnPendingApprovals');
+        if (btnPending) {
+          btnPending.style.display = 'flex';
+        }
+        loadAdminData();
+        updatePendingApprovalsBadge();
+      } else {
+        document.getElementById('adminTabs').classList.add('hidden');
+        document.getElementById('createCardTitle').textContent = 'Report Incident';
+        const btnPending = document.getElementById('btnPendingApprovals');
+        if (btnPending) {
+          btnPending.style.display = 'none';
+        }
+      }
+
+      await loadSites();
+      loadMetrics();
+      loadAlerts();
+
+      return true;
+    }
+
+    function logout() {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('userRole');
+      showLogin();
+      document.getElementById('loginForm').reset();
+    }
+
+    function autofillLogin(type) {
+      if (type === 'admin') {
+        document.getElementById('loginEmail').value = 'admin@missioncontrol.com';
+        document.getElementById('loginPassword').value = 'admin123';
+      } else {
+        document.getElementById('loginEmail').value = 'user@missioncontrol.com';
+        document.getElementById('loginPassword').value = 'user123';
+      }
+    }
+
+    function showError(message) {
+      const errorEl = document.getElementById('loginErrorMessage');
+      errorEl.textContent = message;
+      errorEl.classList.remove('hidden');
+    }
+
+    function hideError() {
+      document.getElementById('loginErrorMessage').classList.add('hidden');
+    }
+
+    function showSuccess(message) {
+      const successEl = document.getElementById('loginSuccessMessage');
+      successEl.textContent = message;
+      successEl.classList.remove('hidden');
+    }
+
+    function hideSuccess() {
+      document.getElementById('loginSuccessMessage').classList.add('hidden');
+    }
+
+    function showCreateAccount() {
+      document.getElementById('createAccountModal').classList.remove('hidden');
+      loadSitesForCreateAccount();
+    }
+
+    function closeCreateAccountModal() {
+      document.getElementById('createAccountModal').classList.add('hidden');
+      document.getElementById('createAccountForm').reset();
+    }
+
+    async function loadSitesForCreateAccount() {
+      // No longer needed since site is a text input, but keeping function for compatibility
+      // Could be used to populate suggestions/autocomplete in the future
+    }
+
+    function handleCreateAccount(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('createName').value;
+      const email = document.getElementById('createEmail').value;
+      const password = document.getElementById('createPassword').value;
+      const confirmPassword = document.getElementById('createConfirmPassword').value;
+      const siteName = document.getElementById('createSite').value.trim();
+      const role = document.getElementById('createRole').value.trim();
+
+      // Validation
+      if (password !== confirmPassword) {
+        showError('Passwords do not match.');
+        return;
+      }
+
+      if (password.length < 6) {
+        showError('Password must be at least 6 characters.');
+        return;
+      }
+
+      // Check if email already exists
+      const accounts = JSON.parse(localStorage.getItem('accounts') || '{}');
+      if (accounts[email]) {
+        showError('An account with this email already exists.');
+        return;
+      }
+
+      // Validation
+      if (!siteName) {
+        showError('Site/Company name is required.');
+        return;
+      }
+
+      if (!role) {
+        showError('Role is required.');
+        return;
+      }
+
+      // Create pending account
+      const newAccount = {
+        userId: Object.keys(accounts).length + 1,
+        email: email,
+        password: password,
+        name: name,
+        role: role,
+        siteName: siteName,
+        approved: false,
+        createdAt: new Date().toISOString()
+      };
+
+      accounts[email] = newAccount;
+      localStorage.setItem('accounts', JSON.stringify(accounts));
+
+      // Update pending approvals list
+      updatePendingApprovalsList();
+
+      closeCreateAccountModal();
+      showSuccess('Account created successfully! Your account is pending admin approval.');
+      
+      // Show pending approval message
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('pendingApprovalMessage').classList.remove('hidden');
+    }
+
+    function showAdminApprovalModal() {
+      document.getElementById('adminApprovalModal').classList.remove('hidden');
+      loadPendingApprovals();
+    }
+
+    function closeAdminApprovalModal() {
+      document.getElementById('adminApprovalModal').classList.add('hidden');
+    }
+
+    function loadPendingApprovals() {
+      const accounts = JSON.parse(localStorage.getItem('accounts') || '{}');
+      const pending = Object.values(accounts).filter(acc => !acc.approved);
+
+      const listEl = document.getElementById('pendingAccountsList');
+      
+      if (pending.length === 0) {
+        listEl.innerHTML = '<div class="empty-state">No pending approvals</div>';
+        return;
+      }
+
+      listEl.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Site/Company</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${pending.map(acc => `
+              <tr>
+                <td>${acc.name}</td>
+                <td>${acc.email}</td>
+                <td>${acc.role || 'N/A'}</td>
+                <td>${acc.siteName || acc.siteId || 'N/A'}</td>
+                <td>${CommonUtils.formatDateShort ? CommonUtils.formatDateShort(acc.createdAt) : new Date(acc.createdAt).toLocaleDateString()}</td>
+                <td>
+                  <button class="view-detail-btn" onclick="showAccountDetail('${acc.email}')">View Details</button>
+                  <button class="btn btn-success btn-sm" onclick="approveAccount('${acc.email}')">Approve</button>
+                  <button class="btn btn-danger btn-sm" onclick="rejectAccount('${acc.email}')">Reject</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function approveAccount(email) {
+      const accounts = JSON.parse(localStorage.getItem('accounts') || '{}');
+      if (accounts[email]) {
+        accounts[email].approved = true;
+        localStorage.setItem('accounts', JSON.stringify(accounts));
+        loadPendingApprovals();
+        updatePendingApprovalsBadge();
+        if (CommonUtils.showNotification) {
+          CommonUtils.showNotification('Account approved successfully');
+        } else {
+          alert('Account approved successfully');
+        }
+      }
+    }
+
+    function rejectAccount(email) {
+      if (confirm('Are you sure you want to reject this account?')) {
+        const accounts = JSON.parse(localStorage.getItem('accounts') || '{}');
+        delete accounts[email];
+        localStorage.setItem('accounts', JSON.stringify(accounts));
+        loadPendingApprovals();
+        updatePendingApprovalsBadge();
+        if (CommonUtils.showNotification) {
+          CommonUtils.showNotification('Account rejected');
+        } else {
+          alert('Account rejected');
+        }
+      }
+    }
+
+    function updatePendingApprovalsBadge() {
+      const accounts = JSON.parse(localStorage.getItem('accounts') || '{}');
+      const pending = Object.values(accounts).filter(acc => !acc.approved).length;
+      const badge = document.getElementById('pendingCountBadge');
+      
+      if (badge) {
+        if (pending > 0) {
+          badge.textContent = pending;
+          badge.style.display = 'flex';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+    }
+
+    function updatePendingApprovalsList() {
+      // This is called when accounts are created/approved/rejected
+      // Reload the list if the modal is open
+      const modal = document.getElementById('adminApprovalModal');
+      if (modal && !modal.classList.contains('hidden')) {
+        loadPendingApprovals();
+      }
+      updatePendingApprovalsBadge();
+    }
+
+    let currentDetailEmail = null;
+
+    function showAccountDetail(email) {
+      const accounts = JSON.parse(localStorage.getItem('accounts') || '{}');
+      const account = accounts[email];
+      
+      if (!account) {
+        alert('Account not found');
+        return;
+      }
+
+      currentDetailEmail = email;
+
+      const contentEl = document.getElementById('accountDetailContent');
+      const createdAt = account.createdAt ? new Date(account.createdAt).toLocaleString() : 'Unknown';
+      const accountAge = account.createdAt ? Math.floor((new Date() - new Date(account.createdAt)) / (1000 * 60 * 60 * 24)) : 0;
+
+      contentEl.innerHTML = `
+        <div class="account-detail-section">
+          <h3>Personal Information</h3>
+          <div class="account-detail-row">
+            <div class="account-detail-label">Full Name:</div>
+            <div class="account-detail-value">${account.name || 'N/A'}</div>
+          </div>
+          <div class="account-detail-row">
+            <div class="account-detail-label">Email Address:</div>
+            <div class="account-detail-value">${account.email || 'N/A'}</div>
+          </div>
+          <div class="account-detail-row">
+            <div class="account-detail-label">Role:</div>
+            <div class="account-detail-value">${account.role || 'N/A'}</div>
+          </div>
+        </div>
+
+        <div class="account-detail-section">
+          <h3>Organization Details</h3>
+          <div class="account-detail-row">
+            <div class="account-detail-label">Site/Company:</div>
+            <div class="account-detail-value">${account.siteName || account.siteId || 'N/A'}</div>
+          </div>
+          <div class="account-detail-row">
+            <div class="account-detail-label">Site ID:</div>
+            <div class="account-detail-value">${account.siteId || 'Not assigned'}</div>
+          </div>
+        </div>
+
+        <div class="account-detail-section">
+          <h3>Account Status</h3>
+          <div class="account-detail-row">
+            <div class="account-detail-label">Status:</div>
+            <div class="account-detail-value">
+              <span style="color: #fbbf24; font-weight: 600;">Pending Approval</span>
+            </div>
+          </div>
+          <div class="account-detail-row">
+            <div class="account-detail-label">Account Created:</div>
+            <div class="account-detail-value">${createdAt}</div>
+          </div>
+          <div class="account-detail-row">
+            <div class="account-detail-label">Days Pending:</div>
+            <div class="account-detail-value">${accountAge} day${accountAge !== 1 ? 's' : ''}</div>
+          </div>
+          <div class="account-detail-row">
+            <div class="account-detail-label">User ID:</div>
+            <div class="account-detail-value">${account.userId || 'N/A'}</div>
+          </div>
+        </div>
+
+        <div class="account-detail-section">
+          <h3>Verification Notes</h3>
+          <div style="color: #9ca3af; font-size: 0.875rem; line-height: 1.6;">
+            <p>Please verify the following before approving:</p>
+            <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
+              <li>Email domain matches the organization</li>
+              <li>Role is appropriate for the site/company</li>
+              <li>Site/Company name is legitimate</li>
+              <li>No duplicate accounts exist for this user</li>
+            </ul>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('accountDetailModal').classList.remove('hidden');
+    }
+
+    function closeAccountDetailModal() {
+      document.getElementById('accountDetailModal').classList.add('hidden');
+      currentDetailEmail = null;
+    }
+
+    function approveAccountFromDetail() {
+      if (currentDetailEmail) {
+        approveAccount(currentDetailEmail);
+        closeAccountDetailModal();
+      }
+    }
+
+    function rejectAccountFromDetail() {
+      if (currentDetailEmail && confirm('Are you sure you want to reject this account?')) {
+        rejectAccount(currentDetailEmail);
+        closeAccountDetailModal();
+      }
+    }
+
+    // Load Sites
     async function loadSites() {
-      const select = document.getElementById("siteSelector");
       try {
-        const resp = await fetch(`${baseUrl}/api/Sites`);
-        if (!resp.ok) return;
+        const sites = await CommonUtils.apiCall('/api/Sites');
+        const select = document.getElementById('siteSelector');
 
-        const sites = await resp.json();
+        if (select && sites && Array.isArray(sites) && sites.length > 0) {
         sites.forEach(s => {
-          const opt = document.createElement("option");
+            const opt = document.createElement('option');
           opt.value = s.siteId;
           opt.textContent = s.name;
           select.appendChild(opt);
         });
 
-        select.onchange = () => {
-          currentSiteId = select.value;
+          select.onchange = (e) => {
+            currentSiteId = e.target.value || '';
           refreshAll();
         };
+        }
       } catch (err) {
-        console.error(err);
+        console.error('Error loading sites:', err);
+        // Continue without site filtering if API fails
+        // The site selector will just show "All Sites"
       }
     }
 
-    async function loadActiveAlert() {
-      const details = document.getElementById("alertDetails");
-      const noAlert = document.getElementById("noAlert");
-      const decisionPill = document.getElementById("decisionPill");
-      const statusText = document.getElementById("actionStatus");
-
-      statusText.textContent = "";
-
-      try {
-        const resp = await fetch(`${baseUrl}/api/Alerts/active${buildSiteQuery()}`);
-        if (resp.status === 404) {
-          details.style.display = "none";
-          noAlert.style.display = "block";
-          document.getElementById("historyList").innerHTML =
-            '<div class="muted">No decisions yet.</div>';
-          document.getElementById("playbookList").innerHTML = "";
-          return;
-        }
-        const alert = await resp.json();
-
-        noAlert.style.display = "none";
-        details.style.display = "block";
-
-        document.getElementById("tlpPill").textContent = alert.tlp || "TLP:UNKNOWN";
-
-        const impactPill = document.getElementById("impactPill");
-        impactPill.textContent = alert.impactBand || "IMPACT:UNKNOWN";
-        impactPill.className = `pill ${impactClassFor(alert.impactBand)}`;
-
-        document.getElementById("statusPill").textContent = alert.status || "STATUS:UNKNOWN";
-
-        if (alert.currentDecision) {
-          decisionPill.style.display = "inline-flex";
-          decisionPill.textContent = `Decision: ${alert.currentDecision}`;
-        } else {
-          decisionPill.style.display = "none";
-        }
-
-        document.getElementById("alertTitle").textContent = alert.title;
-        document.getElementById("alertDescription").textContent = alert.description || "(no description)";
-        document.getElementById("alertFunction").textContent = alert.affectedFunction || "(unspecified)";
-        document.getElementById("alertDetected").textContent =
-          alert.detectedAt ? new Date(alert.detectedAt).toLocaleString() : "(unknown)";
-
-        // Playbook
-        const playbook = playbookForAlert(alert);
-        const pbList = document.getElementById("playbookList");
-        pbList.innerHTML = "";
-        playbook.forEach(step => {
-          const li = document.createElement("li");
-          li.textContent = step;
-          pbList.appendChild(li);
+    function setupEventHandlers() {
+      // Navigation
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const view = link.dataset.view;
+          switchView(view);
+          document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
         });
+      });
 
-        const alertId = alert.alertId;
-
-        document.getElementById("btnGo").onclick = () => sendDecision(alertId, "GO");
-        document.getElementById("btnHold").onclick = () => sendDecision(alertId, "HOLD");
-        document.getElementById("btnEscalate").onclick = () => sendDecision(alertId, "ESCALATE");
-
-        await loadHistory(alertId);
-      } catch (err) {
-        noAlert.style.display = "block";
-        details.style.display = "none";
-        console.error(err);
-      }
-    }
-
-    async function loadHistory(alertId) {
-      const list = document.getElementById("historyList");
-      list.innerHTML = '<div class="muted">Loading…</div>';
-
-      try {
-        const resp = await fetch(`${baseUrl}/api/Alerts/${alertId}/decisions`);
-        if (!resp.ok) {
-          list.innerHTML = '<div class="muted">Unable to load history.</div>';
-          return;
-        }
-
-        const items = await resp.json();
-        if (!items || items.length === 0) {
-          list.innerHTML = '<div class="muted">No decisions yet.</div>';
-          return;
-        }
-
-        list.innerHTML = "";
-        items.forEach(d => {
-          const row = document.createElement("div");
-          row.className = "history-item";
-
-          const main = document.createElement("div");
-          main.className = "history-main";
-
-          const actionBadge = document.createElement("span");
-          actionBadge.className = "badge badge-decision";
-          actionBadge.textContent = d.action;
-          main.appendChild(actionBadge);
-
-          if (d.userName) {
-            const who = document.createElement("span");
-            who.textContent = d.userName;
-            main.appendChild(who);
-          }
-
-          if (d.notes) {
-            const notes = document.createElement("span");
-            notes.className = "history-notes";
-            notes.textContent = `– ${d.notes}`;
-            main.appendChild(notes);
-          }
-
-          const time = document.createElement("span");
-          time.className = "history-time";
-          time.textContent = new Date(d.createdAt).toLocaleString();
-
-          row.appendChild(main);
-          row.appendChild(time);
-          list.appendChild(row);
+      // Tabs
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const tabName = tab.dataset.tab;
+          switchTab(tabName);
         });
-      } catch (err) {
-        console.error(err);
-        list.innerHTML = '<div class="muted">Error loading history.</div>';
+      });
+
+      // Forms
+      document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        await loginUser(email, password);
+      });
+
+      document.getElementById('createAccountForm').addEventListener('submit', handleCreateAccount);
+      document.getElementById('createAlertForm').addEventListener('submit', handleCreateAlert);
+      document.getElementById('incidentForm').addEventListener('submit', handleSubmitIncident);
+
+      // Alert actions
+      document.getElementById('btnGo')?.addEventListener('click', () => sendDecision('GO'));
+      document.getElementById('btnHold')?.addEventListener('click', () => sendDecision('HOLD'));
+      document.getElementById('btnEscalate')?.addEventListener('click', () => sendDecision('ESCALATE'));
+
+      // Recent alerts filters
+      document.getElementById('filterBand')?.addEventListener('change', renderRecentAlerts);
+      document.getElementById('filterStatus')?.addEventListener('change', renderRecentAlerts);
+    }
+
+    function switchView(view) {
+      if (view === 'dashboard') {
+        document.getElementById('dashboardView').classList.remove('hidden');
+        document.getElementById('incidentsView').classList.add('hidden');
+      } else if (view === 'incidents') {
+        document.getElementById('dashboardView').classList.add('hidden');
+        document.getElementById('incidentsView').classList.remove('hidden');
       }
     }
 
-    async function sendDecision(alertId, action) {
-      const statusText = document.getElementById("actionStatus");
-      statusText.textContent = "Submitting decision…";
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+      document.getElementById(`tab-${tabName}`).classList.add('active');
 
-      const body = {
-        action: action,
-        userId: 1,
-        notes: `Decision taken from dashboard: ${action}`
-      };
-
-      try {
-        const resp = await fetch(`${baseUrl}/api/Alerts/${alertId}/decision`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body)
-        });
-
-        if (!resp.ok) {
-          const text = await resp.text();
-          statusText.textContent = `Error: ${resp.status} – ${text}`;
-          return;
-        }
-
-        statusText.textContent = `Decision ${action} recorded. Refreshing data…`;
-
-        await loadMetrics();
-        await loadRecentAlerts();
-        await loadActiveAlert();
-      } catch (err) {
-        console.error(err);
-        statusText.textContent = "Error submitting decision.";
+      if (tabName === 'patches') {
+        loadPatches();
+      } else if (tabName === 'controls') {
+        loadControls();
       }
     }
 
+    // Load Metrics
     async function loadMetrics() {
       try {
-        const resp = await fetch(`${baseUrl}/api/Metrics/overview${buildSiteQuery()}`);
-        if (!resp.ok) return;
+        const query = CommonUtils.buildSiteQuery(currentSiteId);
+        const metrics = await CommonUtils.apiCall(`/api/Metrics/overview${query}`);
 
-        const m = await resp.json();
+        // Top metrics row
+        document.getElementById('metricRunningAlerts').textContent = metrics.activeAlerts || 0;
+        document.getElementById('metric247Alerts').textContent = 0; // Not available in API
+        document.getElementById('metric30Days').textContent = metrics.totalAlerts || 0;
+        document.getElementById('metricTotal').textContent = metrics.totalAlerts || 0;
 
-        document.getElementById("mTotalAlerts").textContent = m.totalAlerts;
-        document.getElementById("mActiveAlerts").textContent = m.activeAlerts;
-        document.getElementById("mBands").textContent =
-          `${m.redAlerts} / ${m.yellowAlerts} / ${m.greenAlerts}`;
-        document.getElementById("mDecisions").textContent =
-          `${m.goDecisions} / ${m.holdDecisions} / ${m.escalateDecisions}`;
-        document.getElementById("mAssets").textContent =
-          `${m.assetsWithFeed} / ${m.totalAssets}`;
-        document.getElementById("mCoverage").textContent =
-          m.coveragePercent != null ? `${m.coveragePercent.toFixed(1)}%` : "–";
+        // Readiness & Coverage section
+        document.getElementById('mTotalAlerts').textContent = metrics.totalAlerts || 0;
+        document.getElementById('mActiveAlerts').textContent = metrics.activeAlerts || 0;
+        document.getElementById('mBands').textContent = 
+          `${metrics.redAlerts || 0} / ${metrics.yellowAlerts || 0} / ${metrics.greenAlerts || 0}`;
+        document.getElementById('mDecisions').textContent = 
+          `${metrics.goDecisions || 0} / ${metrics.holdDecisions || 0} / ${metrics.escalateDecisions || 0}`;
+        document.getElementById('mAssets').textContent = 
+          `${metrics.assetsWithFeed || 0} / ${metrics.totalAssets || 0}`;
+        document.getElementById('mCoverage').textContent = 
+          metrics.coveragePercent != null ? `${metrics.coveragePercent.toFixed(1)}%` : '–';
 
-        if (m.lastDecisionAt) {
-          document.getElementById("metricsUpdated").textContent =
-            `Last decision recorded at ${new Date(m.lastDecisionAt).toLocaleString()}`;
+        if (metrics.lastDecisionAt) {
+          document.getElementById('metricsUpdated').textContent = 
+            `Last decision recorded at ${CommonUtils.formatDate(metrics.lastDecisionAt)}`;
         } else {
-          document.getElementById("metricsUpdated").textContent =
-            "No decisions recorded yet.";
+          document.getElementById('metricsUpdated').textContent = 'No decisions recorded yet.';
         }
       } catch (err) {
-        console.error(err);
+        console.error('Error loading metrics:', err);
       }
     }
 
-    async function loadRecentAlerts() {
-      const listEl = document.getElementById("recentAlertsList");
-      listEl.innerHTML = '<div class="muted">Loading…</div>';
-
+    // Load Alerts
+    async function loadAlerts() {
       try {
-        const resp = await fetch(`${baseUrl}/api/Alerts${buildSiteQuery()}`);
-        if (!resp.ok) {
-          listEl.innerHTML = '<div class="muted">Unable to load alerts.</div>';
+        const query = CommonUtils.buildSiteQuery(currentSiteId);
+        alertsCache = await CommonUtils.apiCall(`/api/Alerts${query}`);
+
+        renderMyAlerts();
+        renderIncomingAlerts();
+        renderRecentAlerts();
+        await loadActiveAlert();
+      } catch (err) {
+        console.error('Error loading alerts:', err);
+      }
+    }
+
+    function renderMyAlerts() {
+      const listEl = document.getElementById('myAlertsList');
+      const activeAlerts = alertsCache.filter(a => a.status === 'ACTIVE').slice(0, 3);
+
+      document.getElementById('myAlertsCount').textContent = activeAlerts.length;
+
+      if (activeAlerts.length === 0) {
+        listEl.innerHTML = '<div class="empty-state">No active alerts</div>';
           return;
         }
 
-        recentAlertsCache = await resp.json();
-        renderRecentAlerts();
-      } catch (err) {
-        console.error(err);
-        listEl.innerHTML = '<div class="muted">Error loading alerts.</div>';
-      }
+      listEl.innerHTML = activeAlerts.map(alert => {
+        const band = alert.impactBand || 'UNKNOWN';
+        const bandClass = band === 'RED' ? 'badge-red' : band === 'YELLOW' ? 'badge-yellow' : 'badge-green';
+        return `
+          <div class="alert-item">
+            <div class="alert-id">#${String(alert.alertId).padStart(5, '0')}</div>
+            <div class="alert-content">
+              <div class="alert-title">${alert.title}</div>
+              <div class="alert-meta">${band} • ${alert.affectedFunction || 'N/A'}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Update status counts
+      document.getElementById('countNew').textContent = alertsCache.filter(a => !a.currentDecision).length;
+      document.getElementById('countProgress').textContent = alertsCache.filter(a => a.currentDecision === 'HOLD').length;
+      document.getElementById('countSuspended').textContent = alertsCache.filter(a => a.status === 'SUPPRESSED').length;
+      document.getElementById('countClosed').textContent = alertsCache.filter(a => a.status === 'RESOLVED').length;
+      document.getElementById('countDue').textContent = 0;
     }
 
-    function renderRecentAlerts() {
-      const listEl = document.getElementById("recentAlertsList");
-      const bandFilter = document.getElementById("filterBand").value;
-      const statusFilter = document.getElementById("filterStatus").value;
+    function renderIncomingAlerts() {
+      const listEl = document.getElementById('incomingAlertsList');
+      const now = new Date();
+      const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-      if (!recentAlertsCache || recentAlertsCache.length === 0) {
-        listEl.innerHTML = '<div class="muted">No alerts yet.</div>';
+      const incoming = alertsCache
+        .filter(a => {
+          if (a.status !== 'ACTIVE') return false;
+          if (!a.detectedAt) return false;
+          return new Date(a.detectedAt) >= yesterday;
+        })
+        .sort((a, b) => new Date(b.detectedAt) - new Date(a.detectedAt))
+        .slice(0, 5);
+
+      if (incoming.length === 0) {
+        listEl.innerHTML = '<div class="empty-state">No new alerts in the last 24 hours</div>';
         return;
       }
 
-      let alerts = [...recentAlertsCache];
+      listEl.innerHTML = incoming.map(alert => {
+        const date = new Date(alert.detectedAt);
+        const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const timeStr = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        return `
+          <div class="alert-item">
+            <div class="alert-id">#${String(alert.alertId).padStart(5, '0')}</div>
+            <div class="alert-content">
+              <div class="alert-title">${alert.title}</div>
+              <div class="alert-meta">${dateStr}, ${timeStr}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
 
+    function renderRecentAlerts() {
+      const listEl = document.getElementById('recentAlertsList');
+      const bandFilter = document.getElementById('filterBand')?.value || '';
+      const statusFilter = document.getElementById('filterStatus')?.value || '';
+
+      if (!alertsCache || alertsCache.length === 0) {
+        listEl.innerHTML = '<div class="empty-state">No alerts yet.</div>';
+        return;
+      }
+
+      let alerts = [...alertsCache];
       alerts.sort((a, b) => {
         const da = a.detectedAt ? new Date(a.detectedAt).getTime() : 0;
         const db = b.detectedAt ? new Date(b.detectedAt).getTime() : 0;
@@ -728,68 +2133,357 @@
       });
 
       if (bandFilter) {
-        alerts = alerts.filter(a =>
-          (a.impactBand || "").toUpperCase() === bandFilter
-        );
+        alerts = alerts.filter(a => (a.impactBand || '').toUpperCase() === bandFilter);
       }
       if (statusFilter) {
-        alerts = alerts.filter(a =>
-          (a.status || "").toUpperCase() === statusFilter
-        );
+        alerts = alerts.filter(a => (a.status || '').toUpperCase() === statusFilter);
       }
 
-      alerts = alerts.slice(0, 5);
+      alerts = alerts.slice(0, 10);
 
       if (alerts.length === 0) {
-        listEl.innerHTML = '<div class="muted">No alerts match filters.</div>';
+        listEl.innerHTML = '<div class="empty-state">No alerts match filters.</div>';
         return;
       }
 
-      listEl.innerHTML = "";
+      listEl.innerHTML = '';
       alerts.forEach(a => {
-        const item = document.createElement("div");
-        item.className = "recent-item";
+        const item = document.createElement('div');
+        item.className = 'alert-item';
 
-        const band = a.impactBand || "UNKNOWN";
-        const bandClass = badgeBandClass(band);
-        const status = a.status || "UNKNOWN";
+        const band = a.impactBand || 'UNKNOWN';
+        const bandClass = CommonUtils.badgeBandClass(band);
+        const status = a.status || 'UNKNOWN';
         const decision = a.currentDecision;
-        const timeText = a.detectedAt
-          ? new Date(a.detectedAt).toLocaleString()
-          : "";
+        const timeText = CommonUtils.formatDate(a.detectedAt);
 
         item.innerHTML = `
-          <div class="recent-title-row">
-            <span class="recent-title" title="${a.title}">${a.title}</span>
-          </div>
-          <div class="recent-meta">
-            <span class="badge ${bandClass}">${band}</span>
-            <span class="badge badge-status">${status}</span>
-            ${decision ? `<span class="badge badge-decision">${decision}</span>` : ""}
-            <span class="recent-time">${timeText}</span>
+          <div class="alert-id">#${String(a.alertId).padStart(5, '0')}</div>
+          <div class="alert-content">
+            <div class="alert-title">${a.title}</div>
+            <div class="alert-meta">
+              <span class="badge ${bandClass}">${band}</span>
+              <span class="badge badge-status">${status}</span>
+              ${decision ? `<span class="badge badge-decision">${decision}</span>` : ''}
+              <span style="margin-left: 0.5rem;">${timeText}</span>
+            </div>
           </div>
         `;
         listEl.appendChild(item);
       });
     }
 
-    function attachFilterHandlers() {
-      document.getElementById("filterBand").onchange = renderRecentAlerts;
-      document.getElementById("filterStatus").onchange = renderRecentAlerts;
+    async function loadActiveAlert() {
+      try {
+        const query = CommonUtils.buildSiteQuery(currentSiteId);
+        const alert = await CommonUtils.apiCall(`/api/Alerts/active${query}`);
+
+        document.getElementById('noActiveAlert').classList.add('hidden');
+        document.getElementById('activeAlertDetails').classList.remove('hidden');
+
+        const badges = document.getElementById('activeAlertBadges');
+        badges.innerHTML = `
+          <span class="badge badge-blue">${alert.tlp || 'TLP:UNKNOWN'}</span>
+          <span class="badge ${alert.impactBand === 'RED' ? 'badge-red' : alert.impactBand === 'YELLOW' ? 'badge-yellow' : 'badge-green'}">${alert.impactBand || 'UNKNOWN'}</span>
+          <span class="badge badge-blue">${alert.status || 'UNKNOWN'}</span>
+          ${alert.currentDecision ? `<span class="badge badge-decision">Decision: ${alert.currentDecision}</span>` : ''}
+        `;
+
+        document.getElementById('activeAlertTitle').textContent = alert.title;
+        document.getElementById('activeAlertDescription').textContent = alert.description || '(no description)';
+        document.getElementById('activeAlertFunction').textContent = alert.affectedFunction || '(unspecified)';
+        document.getElementById('activeAlertDetected').textContent = CommonUtils.formatDate(alert.detectedAt);
+
+        // Playbook
+        const playbook = CommonUtils.playbookForAlert(alert);
+        const pbList = document.getElementById('playbookList');
+        pbList.innerHTML = '';
+        playbook.forEach(step => {
+          const li = document.createElement('li');
+          li.textContent = step;
+          pbList.appendChild(li);
+        });
+
+        // Load decision history
+        await loadHistory(alert.alertId);
+
+        // Store alert ID for decision buttons
+        document.getElementById('btnGo').dataset.alertId = alert.alertId;
+        document.getElementById('btnHold').dataset.alertId = alert.alertId;
+        document.getElementById('btnEscalate').dataset.alertId = alert.alertId;
+      } catch (err) {
+        if (err.message.includes('404') || err.message.includes('Not Found')) {
+          document.getElementById('noActiveAlert').classList.remove('hidden');
+          document.getElementById('activeAlertDetails').classList.add('hidden');
+        }
+      }
     }
 
-    async function refreshAll() {
-      await Promise.all([
-        loadActiveAlert(),
-        loadMetrics(),
-        loadRecentAlerts()
-      ]);
+    async function loadHistory(alertId) {
+      const list = document.getElementById('historyList');
+      list.innerHTML = '<div class="muted">Loading…</div>';
+
+      try {
+        const items = await CommonUtils.apiCall(`/api/Alerts/${alertId}/decisions`);
+
+        if (!items || items.length === 0) {
+          list.innerHTML = '<div class="muted">No decisions yet.</div>';
+          return;
+        }
+
+        list.innerHTML = '';
+        items.forEach(d => {
+          const row = document.createElement('div');
+          row.className = 'history-item';
+          row.style.cssText = 'display: flex; justify-content: space-between; gap: 1rem; padding: 0.5rem; margin-bottom: 0.5rem;';
+
+          const main = document.createElement('div');
+          main.style.cssText = 'display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;';
+
+          const actionBadge = document.createElement('span');
+          actionBadge.className = 'badge badge-decision';
+          actionBadge.textContent = d.action;
+          main.appendChild(actionBadge);
+
+          if (d.userName) {
+            const who = document.createElement('span');
+            who.textContent = d.userName;
+            who.style.color = '#9ca3af';
+            main.appendChild(who);
+          }
+
+          if (d.notes) {
+            const notes = document.createElement('span');
+            notes.textContent = `– ${d.notes}`;
+            notes.style.color = '#9ca3af';
+            main.appendChild(notes);
+          }
+
+          const time = document.createElement('span');
+          time.textContent = CommonUtils.formatDate(d.createdAt);
+          time.style.color = '#6b7280';
+          time.style.whiteSpace = 'nowrap';
+
+          row.appendChild(main);
+          row.appendChild(time);
+          list.appendChild(row);
+        });
+      } catch (err) {
+        console.error('Error loading history:', err);
+        list.innerHTML = '<div class="muted">Error loading history.</div>';
+      }
     }
 
-    // Initial load
-    attachFilterHandlers();
-    loadSites();
-    refreshAll();
+    async function sendDecision(action) {
+      const alertId = document.getElementById('btnGo').dataset.alertId;
+      if (!alertId) return;
+
+      const statusText = document.getElementById('actionStatus');
+      statusText.textContent = 'Submitting decision...';
+
+      try {
+        await CommonUtils.apiCall(`/api/Alerts/${alertId}/decision`, {
+          method: 'POST',
+          body: JSON.stringify({
+        action: action,
+        userId: 1,
+        notes: `Decision taken from dashboard: ${action}`
+          })
+        });
+
+        statusText.textContent = `Decision ${action} recorded. Refreshing data…`;
+        setTimeout(() => {
+          refreshAll();
+        }, 1000);
+      } catch (err) {
+        statusText.textContent = 'Error submitting decision.';
+        console.error(err);
+      }
+    }
+
+    function refreshAll() {
+      loadMetrics();
+      loadAlerts();
+    }
+
+    // Admin Functions
+    async function loadAdminData() {
+      await loadPatches();
+      await loadControls();
+    }
+
+    async function loadPatches() {
+      // Mock data for now
+      if (patchesCache.length === 0) {
+        patchesCache = [
+          { id: 1, name: 'Windows Security Update KB123456', cve: 'CVE-2024-0001', status: 'PENDING', date: new Date() },
+          { id: 2, name: 'Linux Kernel Patch 5.15.2', cve: 'CVE-2024-0002', status: 'APPLIED', date: new Date(Date.now() - 86400000) }
+        ];
+      }
+
+      renderPatches();
+    }
+
+    function renderPatches() {
+      const tbody = document.getElementById('patchesTableBody');
+      const statusFilter = document.getElementById('filterPatchStatus').value;
+      let filtered = [...patchesCache];
+
+      if (statusFilter) {
+        filtered = filtered.filter(p => p.status === statusFilter);
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No patches found</td></tr>';
+          return;
+        }
+
+      tbody.innerHTML = filtered.map(p => `
+        <tr>
+          <td>${p.name}</td>
+          <td>${p.cve || '–'}</td>
+          <td><span class="badge ${p.status === 'APPLIED' ? 'badge-green' : p.status === 'FAILED' ? 'badge-red' : 'badge-yellow'}">${p.status}</span></td>
+          <td>${CommonUtils.formatDateShort(p.date)}</td>
+          <td>
+            <button class="btn btn-secondary btn-sm" onclick="editPatch(${p.id})">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deletePatch(${p.id})">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadControls() {
+      // Mock data for now
+      if (controlsCache.length === 0) {
+        controlsCache = [
+          { id: 1, name: 'Firewall Rule Enforcement', type: 'PREVENTIVE', status: 'ACTIVE', effectiveness: 95 },
+          { id: 2, name: 'Intrusion Detection System', type: 'DETECTIVE', status: 'ACTIVE', effectiveness: 88 }
+        ];
+      }
+
+      renderControls();
+    }
+
+    function renderControls() {
+      const tbody = document.getElementById('controlsTableBody');
+      const typeFilter = document.getElementById('filterControlType').value;
+      const statusFilter = document.getElementById('filterControlStatus').value;
+      let filtered = [...controlsCache];
+
+      if (typeFilter) filtered = filtered.filter(c => c.type === typeFilter);
+      if (statusFilter) filtered = filtered.filter(c => c.status === statusFilter);
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No controls found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(c => `
+        <tr>
+          <td>${c.name}</td>
+          <td>${c.type}</td>
+          <td><span class="badge ${c.status === 'ACTIVE' ? 'badge-green' : 'badge-yellow'}">${c.status}</span></td>
+          <td>${c.effectiveness}%</td>
+          <td>
+            <button class="btn btn-secondary btn-sm" onclick="editControl(${c.id})">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteControl(${c.id})">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openPatchModal() {
+      alert('Patch modal - to be implemented');
+    }
+
+    function openControlModal() {
+      alert('Control modal - to be implemented');
+    }
+
+    function editPatch(id) {
+      alert(`Edit patch ${id} - to be implemented`);
+    }
+
+    function deletePatch(id) {
+      if (confirm('Delete this patch?')) {
+        patchesCache = patchesCache.filter(p => p.id !== id);
+        renderPatches();
+      }
+    }
+
+    function editControl(id) {
+      alert(`Edit control ${id} - to be implemented`);
+    }
+
+    function deleteControl(id) {
+      if (confirm('Delete this control?')) {
+        controlsCache = controlsCache.filter(c => c.id !== id);
+        renderControls();
+      }
+    }
+
+    // Form Handlers
+    async function handleCreateAlert(e) {
+      e.preventDefault();
+      const alert = {
+        title: document.getElementById('alertTitle').value,
+        description: document.getElementById('alertDescription').value,
+        priority: document.getElementById('alertPriority').value,
+        industry: document.getElementById('alertIndustry').value,
+        incidentType: document.getElementById('alertIncidentType').value
+      };
+
+      CommonUtils.showNotification('Alert created successfully (mock)');
+      e.target.reset();
+      setTimeout(() => loadAlerts(), 1000);
+    }
+
+    async function handleSubmitIncident(e) {
+      e.preventDefault();
+      const incident = {
+        type: document.getElementById('incidentType').value,
+        assignedTo: document.getElementById('assignedTo').value,
+        severity: document.querySelector('input[name="severity"]:checked')?.value,
+        sensitiveData: document.querySelector('input[name="sensitiveData"]:checked')?.value,
+        dateTime: document.getElementById('incidentDateTime').value,
+        industry: document.getElementById('incidentIndustry').value,
+        impact: Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value),
+        description: document.getElementById('incidentDescription').value
+      };
+
+      CommonUtils.showNotification('Incident report submitted successfully (mock)');
+      e.target.reset();
+    }
+
+    function resetIncidentForm() {
+      document.getElementById('incidentForm').reset();
+    }
+
+    function refreshIncomingAlerts() {
+      loadAlerts();
+    }
+
+    // Make functions globally available
+    window.autofillLogin = autofillLogin;
+    window.showCreateAccount = showCreateAccount;
+    window.closeCreateAccountModal = closeCreateAccountModal;
+    window.showAdminApprovalModal = showAdminApprovalModal;
+    window.closeAdminApprovalModal = closeAdminApprovalModal;
+    window.showAccountDetail = showAccountDetail;
+    window.closeAccountDetailModal = closeAccountDetailModal;
+    window.approveAccount = approveAccount;
+    window.approveAccountFromDetail = approveAccountFromDetail;
+    window.rejectAccount = rejectAccount;
+    window.rejectAccountFromDetail = rejectAccountFromDetail;
+    window.logout = logout;
+    window.openPatchModal = openPatchModal;
+    window.openControlModal = openControlModal;
+    window.editPatch = editPatch;
+    window.deletePatch = deletePatch;
+    window.editControl = editControl;
+    window.deleteControl = deleteControl;
+    window.refreshIncomingAlerts = refreshIncomingAlerts;
+    window.resetIncidentForm = resetIncidentForm;
   </script>
 </body>
 </html>

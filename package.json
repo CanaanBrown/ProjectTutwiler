@@ -1,0 +1,16 @@
+{
+  "name": "mission-control-tests",
+  "version": "1.0.0",
+  "description": "Playwright tests for Mission Control Dashboard",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}
+
