@@ -51,12 +51,67 @@
       z-index: 50;
       display: flex;
       flex-direction: column;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar.collapsed {
+      width: 80px;
+    }
+
+    .sidebar.collapsed .sidebar-header .logo,
+    .sidebar.collapsed .sidebar-header > div:last-child {
+      display: none;
+    }
+
+    .sidebar.collapsed .nav-text {
+      display: none;
+    }
+
+    .sidebar.collapsed .sidebar-footer {
+      padding: 2rem 1rem;
+    }
+
+    .sidebar.collapsed .sidebar-footer > div:first-child,
+    .sidebar.collapsed .sidebar-footer #userName {
+      display: none;
+    }
+
+    .sidebar-toggle {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      color: #00ffff;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      z-index: 10;
+    }
+
+    .sidebar-toggle:hover {
+      background: rgba(0, 255, 255, 0.2);
+      border-color: #00ffff;
+    }
+
+    .sidebar.collapsed .sidebar-toggle {
+      right: 0.5rem;
     }
 
     .sidebar-header {
       padding: 0 2rem 2rem;
       border-bottom: 1px solid rgba(0, 255, 255, 0.1);
       margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .sidebar.collapsed .sidebar-header {
+      padding: 0 1rem 2rem;
     }
 
     .sidebar-nav {
@@ -76,6 +131,15 @@
       transition: all 0.3s;
       font-weight: 500;
       font-size: 0.9375rem;
+    }
+
+    .sidebar.collapsed .nav-item {
+      padding: 1rem;
+      justify-content: center;
+    }
+
+    .nav-text {
+      transition: opacity 0.3s;
     }
 
     .nav-item:hover {
@@ -101,6 +165,11 @@
       flex: 1;
       margin-left: 280px;
       min-height: 100vh;
+      transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar.collapsed ~ .main-content-wrapper {
+      margin-left: 80px;
     }
 
     /* Top Bar */
@@ -1236,7 +1305,10 @@
   <!-- App Wrapper -->
   <div class="app-wrapper" id="appWrapper" style="display: none;">
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
+      <button class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">
+        <span id="sidebarToggleIcon">◀</span>
+      </button>
       <div class="sidebar-header">
         <div class="logo" style="font-size: 1.5rem; margin-bottom: 0.5rem;">Mission Control</div>
         <div style="font-size: 0.75rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.1em;">Security Dashboard</div>
@@ -1244,22 +1316,12 @@
       <nav class="sidebar-nav">
         <a href="#" class="nav-item active" data-view="dashboard">
           <span>📊</span>
-          <span>Dashboard</span>
+          <span class="nav-text">Dashboard</span>
         </a>
         <a href="#" class="nav-item" data-view="incidents">
           <span>📝</span>
-          <span>Incidents</span>
+          <span class="nav-text">Incidents</span>
         </a>
-        <div id="adminNavItems" style="display: none;">
-          <a href="#" class="nav-item" onclick="const patchesTab = Array.from(document.querySelectorAll('.tab')).find(t => t.textContent.includes('Patches')); if(patchesTab) patchesTab.click(); return false;">
-            <span>🔧</span>
-            <span>Patches</span>
-          </a>
-          <a href="#" class="nav-item" onclick="const controlsTab = Array.from(document.querySelectorAll('.tab')).find(t => t.textContent.includes('Controls')); if(controlsTab) controlsTab.click(); return false;">
-            <span>🛡️</span>
-            <span>Controls</span>
-          </a>
-        </div>
       </nav>
       <div class="sidebar-footer">
         <div style="font-size: 0.75rem; color: #9ca3af; margin-bottom: 0.5rem;">Logged in as</div>
@@ -2050,6 +2112,7 @@
 
     // Initialize
     document.addEventListener('DOMContentLoaded', async () => {
+      restoreSidebarState();
       updateDateTime();
       setInterval(updateDateTime, 1000);
 
@@ -2149,7 +2212,6 @@
       currentRole = CommonUtils.isAdmin(user.role) ? 'admin' : 'user';
       if (currentRole === 'admin') {
         document.getElementById('adminTabs').classList.remove('hidden');
-        document.getElementById('adminNavItems').style.display = 'block';
         document.getElementById('createCardTitle').textContent = 'Create Alert';
         const btnPending = document.getElementById('btnPendingApprovals');
         if (btnPending) {
@@ -2159,7 +2221,6 @@
         updatePendingApprovalsBadge();
       } else {
         document.getElementById('adminTabs').classList.add('hidden');
-        document.getElementById('adminNavItems').style.display = 'none';
         document.getElementById('createCardTitle').textContent = 'Report Incident';
         const btnPending = document.getElementById('btnPendingApprovals');
         if (btnPending) {
@@ -2634,6 +2695,39 @@
         loadControls();
       }
     }
+    
+    // Make switchTab globally available
+    window.switchTab = switchTab;
+    
+    // Toggle sidebar collapse
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const toggleIcon = document.getElementById('sidebarToggleIcon');
+      if (sidebar) {
+        sidebar.classList.toggle('collapsed');
+        if (toggleIcon) {
+          toggleIcon.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
+        }
+        // Save state to localStorage
+        localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+      }
+    }
+    
+    // Restore sidebar state on load
+    function restoreSidebarState() {
+      const sidebar = document.getElementById('sidebar');
+      const toggleIcon = document.getElementById('sidebarToggleIcon');
+      const savedState = localStorage.getItem('sidebarCollapsed');
+      if (sidebar && savedState === 'true') {
+        sidebar.classList.add('collapsed');
+        if (toggleIcon) {
+          toggleIcon.textContent = '▶';
+        }
+      }
+    }
+    
+    // Make toggle function globally available
+    window.toggleSidebar = toggleSidebar;
 
     // Load Metrics
     async function loadMetrics() {
